@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 const port = process.env.PORT || '8900';
-const skillAssigmentRouter = require('./routes/skillAssignment');
+const skillAssignmentRouter = require('./routes/skillAssignment');
 const utilities = require('./utilities/utility');
 
 app.use(express.json());
@@ -11,7 +11,7 @@ app.listen(port);
 
 
 
-app.use("/api/skillAssignment",skillAssigmentRouter);
+app.use("/api/skillAssignment",skillAssignmentRouter);
 
 app.use((req, res) =>
     utilities.formatErrorResponse(res,400,

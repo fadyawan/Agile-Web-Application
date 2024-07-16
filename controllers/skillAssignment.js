@@ -1,7 +1,8 @@
-const router = require('../routes/skillAssigment');
+const router = require('../routes/skillAssignment');
 const utilities = require('../utilities/utility');
+
 const db = require('../models');
-const SkillAssigment = db.skillAssigment;
+const SkillAssignment = db.skillAssignment;
 const Skill = db.skill;
 const Staff = db.user;
 const SkillLevel = db.skill_level;
@@ -10,8 +11,8 @@ const SkillLevel = db.skill_level;
 //################################# could create methods out of the code that gets a skill name and returns an ID, same with staff to reduce repeated code.
 
 getAll  = async (req, res) =>{
-    const skillAssigment = await SkillAssigment.findAll();
-        res.status(200).json(skillAssigment);
+    const skillAssignment = await SkillAssignment.findAll();
+        res.status(200).json(skillAssignment);
 }
 
 getBySkills = async (req, res) =>{
@@ -30,8 +31,8 @@ getBySkills = async (req, res) =>{
 
 
     try{
-        const skillAssigment = await SkillAssigment.findAll({where: {skill_id: skillId}});
-        if(skillAssigment.length==0){
+        const skillAssignment = await SkillAssignment.findAll({where: {skill_id: skillId}});
+        if(skillAssignment.length==0){
             throw new Error("Unable to find any staff members with the skill: " + skill);
         }
     }
@@ -57,8 +58,8 @@ getByStaff = async (req, res) =>{
 
 
     try{
-        const skillAssigment = await SkillAssigment.findAll({where: {staff_id: staffId}});
-        if(skillAssigment.length==0){
+        const skillAssignment = await SkillAssignment.findAll({where: {staff_id: staffId}});
+        if(skillAssignment.length==0){
             throw new Error("Unable to find any skill allocated to: " + firstname + " " + surname);
         }
     }
@@ -115,7 +116,7 @@ create = async (req, res) =>{
 
     const expiryInput = req.body.expiry_date;
 
-    var skillAssigment = {
+    var skillAssignment = {
         staff_id: staffId,
         skill_id: skillId,
         skill_level_id: skillLevelId,
@@ -123,17 +124,17 @@ create = async (req, res) =>{
     };
 
     try{
-        if (skillAssigment.staff_id==null ||
-            skillAssigment.skill_id==null ||
-            skillAssigment.skill_level_id==null ||
-            skillAssigment.expiry_date==null ||
+        if (skillAssignment.staff_id==null ||
+            skillAssignment.skill_id==null ||
+            skillAssignment.skill_level_id==null ||
+            skillAssignment.expiry_date==null
         ){
           throw new Error("Essential fields missing");
         }
     
-        skillAssigment = await SkillAssigment.create(skillAssigment);
+        skillAssignment = await SkillAssignment.create(skillAssignment);
     
-        res.status(201).json(skillAssigment);
+        res.status(201).json(skillAssignment);
       }
      catch (error){
           utilities.formatErrorResponse(res,400,error.message);
@@ -143,16 +144,81 @@ create = async (req, res) =>{
 
 deleting = async (req, res) =>{
 //inputs id 
+const id = req.body.id;
+
+try{
+    const deleted = await SkillAssignment.destroy({where: { id: id }});
+
+    if (deleted==0) {
+      throw new Error("Id not found");
+    }
+
+    res.status(200).send("skill assignment deleted");
+  }
+ catch(error){
+   utilities.formatErrorResponse(res,404,error.message);
+ }
+
 }
 
 staffIsDeleted  = async (req, res) =>{
 //to be ran when a staff member is deleted, requires the staff id, deletes all skill assignments with that staff id.
+const staffId = req.body.staff_id;
+
+try{
+    const deleted = await SkillAssignment.destroy({where: { staff_id: staffId }});
+
+    if (deleted==0) {
+      throw new Error("Staff Id not found");
+    }
+
+    res.status(200).send("skill assignments deleted for staff with Id" + staffId);
+  }
+ catch(error){
+   utilities.formatErrorResponse(res,404,error.message);
+ }
 }
 
 skillIsDeleted  = async (req, res) =>{
 //to be ran when a skill is deleted, requires the skill id, deletes all skill assignments with that skill id.
+const skillId = req.body.skill_id;
+
+try{
+    const deleted = await SkillAssignment.destroy({where: { skill_id: skillId }});
+
+    if (deleted==0) {
+      throw new Error("Skill Id not found");
+    }
+
+    res.status(200).send("skill assignments deleted for the skill with Id" + skillId);
+  }
+ catch(error){
+   utilities.formatErrorResponse(res,404,error.message);
+ }
 }
 
 update  = async (req, res) =>{
+    const id =req.body.id;
 
+    const assignment = {
+        expiry: req.body.expiry_date,
+        skill_level: req.body.skill_level_id
+    };
+
+    try{
+        if (assignment.expiry == null ||
+            assignment.skill_level == null
+        ){
+           throw new Error("Missing essential fields");
+         }
+     
+         await SkillAssignment.update(tool, 
+                           {where: { id: id }}
+         );
+         res.status(200).json(tool);
+       }
+      catch (error){
+         utilities.formatErrorResponse(res,400,error.message);
+       }  
 }
+
