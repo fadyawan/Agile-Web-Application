@@ -39,13 +39,52 @@ getByStaff = async (req, res) =>{
 }
 
 create = async (req, res) =>{
+    const { staff, skill } = req.body;
 
+    if (!staff || !skill) {
+        return utilities.formatErrorResponse(res, 400, "Both 'staff' and 'skill' fields are required.");
+    }
+
+    try {
+        const newSkillAssigment = await SkillAssigment.create({ staff, skill });
+        res.status(201).json(newSkillAssigment);
+    } catch (error) {
+        utilities.formatErrorResponse(res, 500, error.message);
+    }
 }
 
 deleting = async (req, res) =>{
+    const { id } = req.params;
 
+    try {
+        const skillAssigment = await SkillAssigment.findByPk(id);
+        if (!skillAssigment) {
+            return utilities.formatErrorResponse(res, 404, "Skill assignment not found.");
+        }
+
+        await skillAssigment.destroy();
+        res.status(200).json({ message: "Skill assignment deleted successfully." });
+    } catch (error) {
+        utilities.formatErrorResponse(res, 500, error.message);
+    }
 }
 
 update  = async (req, res) =>{
+    const { id } = req.params;
+    const { staff, skill } = req.body;
 
+    try {
+        const skillAssigment = await SkillAssigment.findByPk(id);
+        if (!skillAssigment) {
+            return utilities.formatErrorResponse(res, 404, "Skill assignment not found.");
+        }
+
+        if (staff) skillAssigment.staff = staff;
+        if (skill) skillAssigment.skill = skill;
+
+        await skillAssigment.save();
+        res.status(200).json(skillAssigment);
+    } catch (error) {
+        utilities.formatErrorResponse(res, 500, error.message);
+    }
 }
