@@ -22,7 +22,7 @@ module.exports = (Sequelize, Sequelize) => {
     {
       timestamps: false,
       freezeTableName: true,
-      tableName: 'system_role'
+      tableName: 'user'
     }
     );
     User.belongsTo(StaffAssignment,

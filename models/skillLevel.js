@@ -10,7 +10,7 @@ module.exports = (Sequelize, Sequelize) => {
     {
       timestamps: false,
       freezeTableName: true,
-      tableName: 'system_role'
+      tableName: 'skill_level'
     }
     );
 
