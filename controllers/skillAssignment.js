@@ -222,3 +222,40 @@ update  = async (req, res) =>{
        }  
 }
 
+getAllStaffDetails = async (req, res) => {
+    try {
+        const staffDetails = await Staff.findAll({
+            include: [
+                {
+                    model: SkillAssignment,
+                    include: [
+                        {
+                            model: Skill,
+                            include: [SkillCategory]
+                        },
+                        {
+                            model: SkillLevel
+                        }
+                    ]
+                }
+            ]
+        });
+
+        res.status(200).json(staffDetails);
+    } catch (error) {
+        utilities.formatErrorResponse(res, 500, error.message);
+    }
+}
+
+// this is to export the endpoints so that the frontend can access them using either a service or directly using axios or something
+module.exports = {
+    getAll,
+    getBySkills,
+    getByStaff,
+    create,
+    deleting,
+    staffIsDeleted,
+    skillIsDeleted,
+    update,
+    getAllStaffDetails
+};
