@@ -2,12 +2,7 @@ const { Sequelize } = require("sequelize");
 
 module.exports = (sequelize, Sequelize) => {
     const Skill = sequelize.define("skill", {
-        id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
-        name: {
+        description: {
             type: Sequelize.STRING,
             allowNull: false
         }
@@ -16,6 +11,11 @@ module.exports = (sequelize, Sequelize) => {
         freezeTableName: true,
         tableName: 'skill'
     });
+
+    Skill.belongsTo(SkillCategory,
+        {foreignKey: 'skill_category_id'});
+    Skill.belongsTo(SkillAssignment,
+        {foreignKey: 'skill_id'});
 
     return Skill;
 };
