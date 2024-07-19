@@ -12,6 +12,7 @@ app.listen(port);
 
 
 app.use("/api/skillAssignment",skillAssigmentRouter);
+app.use('/skills', skillRoutes);
 
 app.use((req, res) =>
     utilities.formatErrorResponse(res,400,
