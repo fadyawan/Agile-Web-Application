@@ -21,7 +21,4 @@ db.sequelize = sequelize;
 db.skillAssignment = require("./skillAssignment")(sequelize, Sequelize);
 db.skill = require("./skill")(sequelize, Sequelize);
 
-// Define relationships if any
-// e.g., db.skillAssignment.belongsTo(db.skill);
-
 module.exports = db;
