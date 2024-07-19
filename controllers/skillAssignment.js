@@ -1,14 +1,16 @@
 const router = require('../routes/skillAssignment');
 const utilities = require('../utilities/utility');
 
-const db = require('../models');
-const SkillAssignment = db.skillAssignment;
-const Skill = db.skill;
-const Staff = db.user;
-const SkillLevel = db.skill_level;
+const dbSkillAssignment = require('../models/skillAssignment');
+const dbSkill = require('../models/skill');
+const dbUser = require('../models/user');
+const dbSkillLevel = require('../models/skillLevel');
+const skillAssignment = require('../models/skillAssignment');
 
-
-//################################# could create methods out of the code that gets a skill name and returns an ID, same with staff to reduce repeated code.
+const SkillAssignment = dbSkillAssignment.skillAssignment;
+const Skill = dbSkill.skill;
+const Staff = dbUser.user;
+const SkillLevel = dbSkillLevel.skill_level;
 
 getAll  = async (req, res) =>{
     const skillAssignment = await SkillAssignment.findAll();
@@ -212,10 +214,10 @@ update  = async (req, res) =>{
            throw new Error("Missing essential fields");
          }
      
-         await SkillAssignment.update(tool, 
+         await SkillAssignment.update(skillAssignment, 
                            {where: { id: id }}
          );
-         res.status(200).json(tool);
+         res.status(200).json(skillAssignment);
        }
       catch (error){
          utilities.formatErrorResponse(res,400,error.message);

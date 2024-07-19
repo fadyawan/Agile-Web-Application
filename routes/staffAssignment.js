@@ -10,6 +10,5 @@ router.get('/:manager_id', controller.getByManager);
 
 router.post('/', controller.create);
 router.delete('/', controller.deleting);
-router.put('/', controller.update);
 
 module.exports = router;

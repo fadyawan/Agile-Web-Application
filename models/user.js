@@ -25,14 +25,10 @@ module.exports = (Sequelize, Sequelize) => {
       tableName: 'user'
     }
     );
-    User.belongsTo(StaffAssignment,
-        {foreignKey: 'staff_id'});
-    User.belongsTo(StaffAssignment,
-        {foreignKey: 'manager_id'});
+
     User.belongsTo(SystemRole,
         {foreignKey: 'system_role'});
-    User.belongsTo(SkillAssignment,
-        {foreignKey: 'staff_id'});
+
 
     return SkillCategory;
 };

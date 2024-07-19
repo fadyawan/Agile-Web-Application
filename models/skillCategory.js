@@ -14,9 +14,6 @@ module.exports = (Sequelize, Sequelize) => {
     }
     );
 
-    SkillCategory.belongsTo(Skill,
-        {foreignKey: 'skill_id'});
-
 
 
     return SkillCategory;
