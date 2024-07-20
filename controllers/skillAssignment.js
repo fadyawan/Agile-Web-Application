@@ -1,15 +1,12 @@
 const router = require('../routes/skillAssignment');
 const utilities = require('../utilities/utility');
 
-const dbSkillAssignment = require('../models/skillAssignment');
-const dbSkill = require('../models/skill');
-const dbUser = require('../models/user');
-const dbSkillLevel = require('../models/skillLevel');
+const db = require('../models');
 
-const SkillAssignment = dbSkillAssignment.skillAssignment;
-const Skill = dbSkill.skill;
-const Staff = dbUser.user;
-const SkillLevel = dbSkillLevel.skill_level;
+const SkillAssignment = db.SkillAssignment;
+const Skill = db.Skill;
+const Staff = db.User;
+const SkillLevel = db.SkillLevel;
 
 getAll  = async (req, res) =>{
     const skillAssignment = await SkillAssignment.findAll();

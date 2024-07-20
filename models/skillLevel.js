@@ -1,6 +1,4 @@
-const { Sequelize } = require("sequelize");
-
-module.exports = (Sequelize, sequelize) => {
+module.exports = (sequelize, Sequelize) => {
     const SkillLevel = sequelize.define("skill_level",
     {
     skill_level: {
@@ -14,10 +12,5 @@ module.exports = (Sequelize, sequelize) => {
     }
     );
 
-    SkillLevel.belongsTo(SkillAssignment,
-        {foreignKey: 'skill_level_id'});
-
- 
-
-    return SkillCategory;
+    return SkillLevel;
 };

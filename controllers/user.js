@@ -1,11 +1,9 @@
 const router = require('../routes/user');
 const utilities = require('../utilities/utility');
 
-const dbUser = require('../models/user');
-const dbSystemrole = require('../models/systemRole')
-
-const User = dbUser.user;
-const SystemRole = dbSystemrole.systemRole
+const db = require('../models');
+const User = db.User;
+const SystemRole = db.SystemRole
 
 getAll  = async (req, res) =>{
     const user = await User.findAll();

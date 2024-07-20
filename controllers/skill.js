@@ -1,12 +1,9 @@
 const router = require('../routes/skill');
 const utilities = require('../utilities/utility');
 
-const dbSkill= require('../models/skill');
-const dbSkillCategory = require('../models/skillCategory');
-const skillCategory = require('../models/skillCategory');
-
-const Skill = dbSkill.Skill;
-const SkillCategory = dbSkillCategory.SkillCategory;
+const db = require('../models');
+const Skill = db.Skill;
+const SkillCategory = db.SkillCategory;
 
 
 getAll = async (req, res) =>{

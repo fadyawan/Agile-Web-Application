@@ -1,6 +1,14 @@
 const config = require("../config/config");
-const skill = require("./skill");
-const skillCategory = require("./skillCategory");
+
+const Skill = require("./skill");
+const SkillCategory = require("./skillCategory");
+const SkillLevel = require("./skillLevel");
+const SkillAssignment = require("./skillAssignment");
+const StaffAssignment = require("./staffAssignment");
+const SystemRole = require("./systemRole");
+const User = require("./user");
+
+
 
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(
@@ -25,7 +33,16 @@ const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.skillCategory = skillCategory(sequelize, Sequelize);
-db.skill = skill(sequelize, Sequelize, db.skillCategory);
+
+
+db.skillCategory = SkillCategory(sequelize, Sequelize);
+db.skill = Skill(sequelize, Sequelize, db.skillCategory);
+db.skillLevel = SkillLevel(sequelize, Sequelize);
+db.systemRole = SystemRole(sequelize, Sequelize);
+db.user = User(sequelize, Sequelize, db.systemRole);
+db.skillAssignment = SkillAssignment(sequelize, Sequelize, db.user, db.skill, db.skillLevel);
+db.staffAssignment = StaffAssignment(sequelize, Sequelize, db.user);
+
+
 
 module.exports = db;
