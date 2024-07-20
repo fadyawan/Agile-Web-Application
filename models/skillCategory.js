@@ -1,6 +1,4 @@
-const { Sequelize } = require("sequelize");
-
-module.exports = (Sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize) => {
     const SkillCategory = sequelize.define("skill_category",
     {
     description: {
@@ -13,9 +11,6 @@ module.exports = (Sequelize, Sequelize) => {
       tableName: 'skill_category'
     }
     );
-
-    SkillCategory.belongsTo(Skill,
-        {foreignKey: 'skill_id'});
 
 
 

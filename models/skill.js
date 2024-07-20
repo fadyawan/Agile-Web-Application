@@ -1,7 +1,5 @@
-const { Sequelize } = require("sequelize");
-
-module.exports = (sequelize, Sequelize) => {
-    const Skill = sequelize.define("skill", {
+module.exports = (sequelize, Sequelize, SkillCategory) => {
+    const Skill = sequelize.define("Skill", {
         description: {
             type: Sequelize.STRING,
             allowNull: false
@@ -14,8 +12,6 @@ module.exports = (sequelize, Sequelize) => {
 
     Skill.belongsTo(SkillCategory,
         {foreignKey: 'skill_category_id'});
-    Skill.belongsTo(SkillAssignment,
-        {foreignKey: 'skill_id'});
 
     return Skill;
 };

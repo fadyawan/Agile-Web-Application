@@ -1,7 +1,9 @@
 {
   "name": "agile-web-application",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "",
+  "main": "app.js",
+
   "scripts": {
     "start": "nodemon app",
     "test": "jest"

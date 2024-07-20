@@ -1,6 +1,4 @@
-const { Sequelize } = require("sequelize");
-
-module.exports = (Sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize, Staff, Skill, SkillLevel) => {
     const SkillAssignment = sequelize.define("skill_assignment",
     {
     expiry_date: {
@@ -27,11 +25,3 @@ module.exports = (Sequelize, Sequelize) => {
 
     return SkillAssignment;
 };
-
-
-
-//id - int - primary key
-//staff_id - int - foreign key
-//skill_id - int - foreign key
-//skill_level_id - int - foreign key
-//expiry_Date - date

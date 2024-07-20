@@ -4,12 +4,11 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', controller.getAll);
-router.get('/:staff_id', controller.getByStaff);
-router.get('/:manager_id', controller.getByManager);
-
+router.get('/id/:id', controller.getById);
+router.get('/staff/:staff_id', controller.getByStaff);
+router.get('/skill/:manager_id', controller.getByManager);
 
 router.post('/', controller.create);
 router.delete('/', controller.deleting);
-router.put('/', controller.update);
 
 module.exports = router;
