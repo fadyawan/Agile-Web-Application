@@ -10,6 +10,22 @@ getAll  = async (req, res) =>{
         res.status(200).json(skillCategory);
 }
 
+getById = async (req, res) =>{
+    const id = req.params.id;
+
+    try {
+        const skillCategory = await SkillCategory.findByPk(id);
+
+        if(skillCategory==null || skillCategory.length==0){
+            throw new Error("Unable to find the skill category with id " + id);
+        }
+        res.status(200).json(skillCategory);
+        }
+        catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+}
+
 create  = async (req, res) =>{
     var skillCategory = {
         description: req.body.description,
@@ -33,7 +49,7 @@ create  = async (req, res) =>{
 
 deleting  = async (req, res) =>{
 
-    const id = req.body.id;
+    const id = req.params.id;
     try{
         const deleted = await SkillCategory.destroy({where: { id: id }});
         
@@ -50,7 +66,7 @@ deleting  = async (req, res) =>{
 }
 
 update  = async (req, res) =>{
-    const id =req.body.id;
+    const id =req.params.id;
 
     const skillCategory = {
         description: req.body.description
@@ -74,6 +90,7 @@ update  = async (req, res) =>{
 
 module.exports = {
     getAll,
+    getById,
     create,
     deleting,
     update

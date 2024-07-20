@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-module.exports = (Sequelize, Sequelize) => {
+module.exports = (Sequelize, sequelize) => {
     const StaffAssignment = sequelize.define("staff_assignment",
     {
       timestamps: false,

@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-module.exports = (Sequelize, Sequelize) => {
+module.exports = (Sequelize, sequelize) => {
     const User = sequelize.define("user",
     {
     firstname: {

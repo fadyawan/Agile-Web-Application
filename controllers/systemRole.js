@@ -11,6 +11,22 @@ getAll  = async (req, res) =>{
         res.status(200).json(systemRole);
 }
 
+getById = async (req, res) =>{
+    const id = req.params.id;
+
+    try {
+        const systemRole = await SystemRole.findByPk(id);
+
+        if(systemRole==null || systemRole.length==0){
+            throw new Error("Unable to find the system role with id " + id);
+        }
+        res.status(200).json(systemRole);
+        }
+        catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+}
+
 create  = async (req, res) =>{
     var systemRole = {
         systemRole: req.body.system_role,
@@ -34,7 +50,7 @@ create  = async (req, res) =>{
 
 deleting  = async (req, res) =>{
 
-    const id = req.body.id;
+    const id = req.params.id;
     try{
         const deleted = await SystemRole.destroy({where: { id: id }});
         
@@ -51,7 +67,7 @@ deleting  = async (req, res) =>{
 }
 
 update  = async (req, res) =>{
-    const id =req.body.id;
+    const id =req.params.id;
 
     const systemRole = {
         systemRole: req.body.system_role
@@ -75,6 +91,7 @@ update  = async (req, res) =>{
 
 module.exports = {
     getAll,
+    getById,
     create,
     deleting,
     update

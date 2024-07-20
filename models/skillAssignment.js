@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-module.exports = (Sequelize, Sequelize) => {
+module.exports = (Sequelize, sequelize) => {
     const SkillAssignment = sequelize.define("skill_assignment",
     {
     expiry_date: {

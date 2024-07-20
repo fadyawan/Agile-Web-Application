@@ -10,6 +10,22 @@ getAll  = async (req, res) =>{
         res.status(200).json(skillLevel);
 }
 
+getById = async (req, res) =>{
+    const id = req.params.id;
+
+    try {
+        const skillLevel = await SkillLevel.findByPk(id);
+
+        if(skillLevel==null || skillLevel.length==0){
+            throw new Error("Unable to find the skill level with id " + id);
+        }
+        res.status(200).json(skillLevel);
+        }
+        catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+}
+
 create  = async (req, res) =>{
     var skillLevel = {
         skillLevel: req.body.skill_level,
@@ -33,7 +49,7 @@ create  = async (req, res) =>{
 
 deleting  = async (req, res) =>{
 
-    const id = req.body.id;
+    const id = req.params.id;
     try{
         const deleted = await SkillLevel.destroy({where: { id: id }});
         
@@ -50,7 +66,7 @@ deleting  = async (req, res) =>{
 }
 
 update  = async (req, res) =>{
-    const id =req.body.id;
+    const id =req.params.id;
 
     const skillLevel = {
         skillLevel: req.body.skill_level
@@ -74,6 +90,7 @@ update  = async (req, res) =>{
 
 module.exports = {
     getAll,
+    getById,
     create,
     deleting,
     update

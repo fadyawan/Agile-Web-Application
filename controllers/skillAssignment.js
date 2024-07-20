@@ -5,7 +5,6 @@ const dbSkillAssignment = require('../models/skillAssignment');
 const dbSkill = require('../models/skill');
 const dbUser = require('../models/user');
 const dbSkillLevel = require('../models/skillLevel');
-const skillAssignment = require('../models/skillAssignment');
 
 const SkillAssignment = dbSkillAssignment.skillAssignment;
 const Skill = dbSkill.skill;
@@ -15,6 +14,22 @@ const SkillLevel = dbSkillLevel.skill_level;
 getAll  = async (req, res) =>{
     const skillAssignment = await SkillAssignment.findAll();
         res.status(200).json(skillAssignment);
+}
+
+getById = async (req, res) =>{
+    const id = req.params.id;
+
+    try {
+        const skillAssignment = await SkillAssignment.findByPk(id);
+
+        if(skillAssignment==null || skillAssignment.length==0){
+            throw new Error("Unable to find the skill assignment with id " + id);
+        }
+        res.status(200).json(skillAssignment);
+        }
+        catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
 }
 
 getBySkills = async (req, res) =>{
@@ -71,11 +86,6 @@ getByStaff = async (req, res) =>{
 }
 
 create = async (req, res) =>{
-// inputs, skill, staff firstname, staff surname, skill level, expiry
-// needs to check the staff table for firstname and surname together as one variable, if present return the id.
-// needs to check the skill level table to ensure the level entered is one of the options and return the id.
-//
-//needs to check the skill table for the description and return the Id
     const firstname = req.body.firstname;
     const surname = req.body.surname;
     try{
@@ -145,8 +155,7 @@ create = async (req, res) =>{
 }
 
 deleting = async (req, res) =>{
-//inputs id 
-const id = req.body.id;
+const id = req.params.id;
 
 try{
     const deleted = await SkillAssignment.destroy({where: { id: id }});
@@ -164,14 +173,13 @@ try{
 }
 
 staffIsDeleted  = async (req, res) =>{
-//to be ran when a staff member is deleted, requires the staff id, deletes all skill assignments with that staff id.
 const staffId = req.body.staff_id;
 
 try{
     const deleted = await SkillAssignment.destroy({where: { staff_id: staffId }});
 
     if (deleted==0) {
-      throw new Error("Staff Id not found");
+      throw new Error("No assignments with the staff id " + staffId + " found.");
     }
 
     res.status(200).send("skill assignments deleted for staff with Id" + staffId);
@@ -182,14 +190,13 @@ try{
 }
 
 skillIsDeleted  = async (req, res) =>{
-//to be ran when a skill is deleted, requires the skill id, deletes all skill assignments with that skill id.
 const skillId = req.body.skill_id;
 
 try{
     const deleted = await SkillAssignment.destroy({where: { skill_id: skillId }});
 
     if (deleted==0) {
-      throw new Error("Skill Id not found");
+      throw new Error("No assignments with the skill id " + skillId + " found.");
     }
 
     res.status(200).send("skill assignments deleted for the skill with Id" + skillId);
@@ -200,7 +207,7 @@ try{
 }
 
 update  = async (req, res) =>{
-    const id =req.body.id;
+    const id =req.params.id;
 
     const assignment = {
         expiry: req.body.expiry_date,
@@ -249,9 +256,9 @@ getAllStaffDetails = async (req, res) => {
     }
 }
 
-// this is to export the endpoints so that the frontend can access them using either a service or directly using axios or something
 module.exports = {
     getAll,
+    getById,
     getBySkills,
     getByStaff,
     create,

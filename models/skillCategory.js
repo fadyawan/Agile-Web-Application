@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
 
-module.exports = (Sequelize, Sequelize) => {
+module.exports = (Sequelize, sequelize) => {
     const SkillCategory = sequelize.define("skill_category",
     {
     description: {
