@@ -1,7 +1,7 @@
 const app = require('../app');
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/skillController');
+const controller = require('../controllers/skill');
 
 router.get('/', controller.getAll);
 router.get('/:id', controller.getSkillById);

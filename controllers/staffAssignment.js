@@ -1,10 +1,7 @@
 const router = require('../routes/staffAssignment');
 const utilities = require('../utilities/utility');
-
 const dbStaffAssignment = require('../models/staffAssignment');
 const dbUser = require('../models/user');
-const { getByStaff } = require('./skillAssignment');
-
 const StaffAssignment = dbStaffAssignment.staffAssignment;
 const User = dbUser.user
 
