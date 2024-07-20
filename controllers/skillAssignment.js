@@ -155,7 +155,7 @@ create = async (req, res) =>{
 }
 
 deleting = async (req, res) =>{
-const id = req.params.id;
+const id = req.body.id;
 
 try{
     const deleted = await SkillAssignment.destroy({where: { id: id }});
@@ -172,42 +172,8 @@ try{
 
 }
 
-staffIsDeleted  = async (req, res) =>{
-const staffId = req.body.staff_id;
-
-try{
-    const deleted = await SkillAssignment.destroy({where: { staff_id: staffId }});
-
-    if (deleted==0) {
-      throw new Error("No assignments with the staff id " + staffId + " found.");
-    }
-
-    res.status(200).send("skill assignments deleted for staff with Id" + staffId);
-  }
- catch(error){
-   utilities.formatErrorResponse(res,404,error.message);
- }
-}
-
-skillIsDeleted  = async (req, res) =>{
-const skillId = req.body.skill_id;
-
-try{
-    const deleted = await SkillAssignment.destroy({where: { skill_id: skillId }});
-
-    if (deleted==0) {
-      throw new Error("No assignments with the skill id " + skillId + " found.");
-    }
-
-    res.status(200).send("skill assignments deleted for the skill with Id" + skillId);
-  }
- catch(error){
-   utilities.formatErrorResponse(res,404,error.message);
- }
-}
-
 update  = async (req, res) =>{
-    const id =req.params.id;
+    const id =req.body.id;
 
     const assignment = {
         expiry: req.body.expiry_date,
@@ -263,8 +229,6 @@ module.exports = {
     getByStaff,
     create,
     deleting,
-    staffIsDeleted,
-    skillIsDeleted,
     update,
     getAllStaffDetails
 };

@@ -49,7 +49,7 @@ create  = async (req, res) =>{
 
 deleting  = async (req, res) =>{
 
-    const id = req.params.id;
+    const id = req.body.id;
     try{
         const deleted = await SkillLevel.destroy({where: { id: id }});
         
@@ -66,7 +66,7 @@ deleting  = async (req, res) =>{
 }
 
 update  = async (req, res) =>{
-    const id =req.params.id;
+    const id =req.body.id;
 
     const skillLevel = {
         skillLevel: req.body.skill_level

@@ -5,8 +5,8 @@ const dbSkill= require('../models/skill');
 const dbSkillCategory = require('../models/skillCategory');
 const skillCategory = require('../models/skillCategory');
 
-const Skill = dbSkill.skill;
-const SkillCategory = dbSkillCategory.skillCategory;
+const Skill = dbSkill.Skill;
+const SkillCategory = dbSkillCategory.SkillCategory;
 
 
 getAll = async (req, res) =>{
@@ -148,7 +148,7 @@ update = async (req, res) =>{
 }
 
 deleting = async (req, res) =>{
-    const id = req.params.id;
+    const id = req.body.id;
     try{
         const deleted = await SkillCategory.destroy({where: { id: id }});
         

@@ -4,11 +4,12 @@ const router = express.Router();
 const controller = require('../controllers/skill');
 
 router.get('/', controller.getAll);
-router.get('/:id', controller.getSkillById);
-router.get('/:description', controller.getSkillByDescription);
-router.get('/:category', controller.getSkillByCategory);
+router.get('/id/:id', controller.getSkillById);
+router.get('/description/:description', controller.getSkillByDescription);
+router.get('/category/:category', controller.getSkillByCategory);
+
 router.post('/', controller.create);
-router.put('/:id', controller.update);
-router.delete('/:id', controller.deleting);
+router.put('/', controller.update);
+router.delete('/', controller.deleting);
 
 module.exports = router;

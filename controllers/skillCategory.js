@@ -1,8 +1,6 @@
 const router = require('../routes/skillCategory');
 const utilities = require('../utilities/utility');
-
-const db = require('../models/skillCategory');
-
+const db = require('../models').default;
 const SkillCategory = db.skillCategory;
 
 getAll  = async (req, res) =>{
@@ -49,7 +47,7 @@ create  = async (req, res) =>{
 
 deleting  = async (req, res) =>{
 
-    const id = req.params.id;
+    const id = req.body.id;
     try{
         const deleted = await SkillCategory.destroy({where: { id: id }});
         
@@ -66,7 +64,7 @@ deleting  = async (req, res) =>{
 }
 
 update  = async (req, res) =>{
-    const id =req.params.id;
+    const id =req.body.id;
 
     const skillCategory = {
         description: req.body.description

@@ -73,7 +73,7 @@ create  = async (req, res) =>{
 
 deleting  = async (req, res) =>{
 
-    const id = req.params.id;
+    const id = req.body.id;
     try{
         const deleted = await User.destroy({where: { id: id }});
         
@@ -90,7 +90,7 @@ deleting  = async (req, res) =>{
 }
 
 update  = async (req, res) =>{
-    const id =req.params.id;
+    const id =req.body.id;
 
     const user = {
         firstName: req.body.firstname,

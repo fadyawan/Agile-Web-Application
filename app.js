@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const logger = require('morgan');
 
 const port = process.env.PORT || '8900';
 const skillAssignmentRouter = require('./routes/skillAssignment');
@@ -13,7 +14,8 @@ const staffAssignmentRouter = require('./routes/staffAssignment');
 const utilities = require('./utilities/utility');
 
 app.use(express.json());
-app.set('port', port)
+app.use(logger('dev'));
+app.set('port', port);
 app.listen(port);
 
 app.use("/api/skillAssignment",skillAssignmentRouter);

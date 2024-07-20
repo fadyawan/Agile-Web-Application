@@ -50,7 +50,7 @@ create  = async (req, res) =>{
 
 deleting  = async (req, res) =>{
 
-    const id = req.params.id;
+    const id = req.body.id;
     try{
         const deleted = await SystemRole.destroy({where: { id: id }});
         
@@ -67,7 +67,7 @@ deleting  = async (req, res) =>{
 }
 
 update  = async (req, res) =>{
-    const id =req.params.id;
+    const id =req.body.id;
 
     const systemRole = {
         systemRole: req.body.system_role

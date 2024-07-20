@@ -125,7 +125,7 @@ create  = async (req, res) =>{
 
 deleting  = async (req, res) =>{
 
-    const id = req.params.id;
+    const id = req.body.id;
     try{
         const deleted = await StaffAssignment.destroy({where: { id: id }});
         
