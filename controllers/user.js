@@ -37,7 +37,7 @@ create  = async (req, res) =>{
         };
 
         try{
-            const systemRole = await SystemRole.findAll({where: {systemRoleId: id}});
+            const systemRole = await SystemRole.findAll({where: {id: user.systemRoleId}});
             if(systemRole.length==0){
                 throw new Error("Unable to find the system role with id" + id);
             }

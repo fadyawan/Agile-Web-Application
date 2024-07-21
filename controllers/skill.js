@@ -44,19 +44,8 @@ getSkillByDescription = async (req, res) =>{
 }
 
 getSkillByCategory = async (req, res) =>{
-    const category = req.params.category;
+    const categoryId = req.params.category_id;
 
-    try {
-        const skillCategory = await Skill.findAll({where: {description: category}});
-
-        if(skillCategory==null || skillCategory.length==0){
-            throw new Error("Unable to find the skill category " + category);
-        }
-        const categoryId = skillCategory.id;
-        }
-        catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
-        }
 
     try {
         const skill = await Skill.findAll({where: {skill_category_id: categoryId}});
@@ -79,7 +68,7 @@ create = async (req, res) =>{
 
 
         try{
-            const category = await SkillCategory.findAll({where: {id: skillCategoryId}});
+            const category = await SkillCategory.findAll({where: {id: skill.skillCategoryId}});
             if(category.length==0){
                 throw new Error("Unable to find the skill category with id" + category);
             }

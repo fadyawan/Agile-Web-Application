@@ -87,7 +87,7 @@ create  = async (req, res) =>{
     };
 
     try{
-        const user = await User.findAll({where: {id: staffId}});
+        const user = await User.findAll({where: {id: staffAssignment.staffId}});
         if(user.length==0){
             throw new Error("Unable to find the staff member with id" + id);
         }
@@ -97,7 +97,7 @@ create  = async (req, res) =>{
     }
 
     try{
-        const user = await User.findAll({where: {id: managerId}});
+        const user = await User.findAll({where: {id: staffAssignment.managerId}});
         if(user.length==0){
             throw new Error("Unable to find the manager with id" + id);
         }
@@ -112,7 +112,7 @@ create  = async (req, res) =>{
             staffAssignment.managerId==null){
             throw new Error("Essential fields missing");
             }
-            staffAssignment = await StaffAssignment.create(staffAssignment);
+            createAssignment = await StaffAssignment.create(staffAssignment);
             res.status(201).json(staffAssignment);
             }
             catch (error){
@@ -129,7 +129,7 @@ deleting  = async (req, res) =>{
     try{
         const doesAssignmentExist = await StaffAssignment.findAll({where: {id: id}});
         if(doesAssignmentExist.length==0 || doesAssignmentExist==null){
-            throw new Error("Unable to find the  staff assignment with id" + id);
+            throw new Error("Unable to find the staff assignment with id " + id);
         }
     }
     catch(error){
