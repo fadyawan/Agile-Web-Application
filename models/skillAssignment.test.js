@@ -1,13 +1,13 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const SkillAssignmentModel = require('../models/skillAssignment');
-const StaffModel = require('../models/user');
+const UserModel = require('../models/user');
 const SkillModel = require('../models/skill');
 const SkillLevelModel = require('../models/skillLevel');
 
 describe('SkillAssignment Model', () => {
     let sequelize;
     let SkillAssignment;
-    let Staff;
+    let User;
     let Skill;
     let SkillLevel;
 
@@ -16,10 +16,10 @@ describe('SkillAssignment Model', () => {
         sequelize = new Sequelize('sqlite::memory:', { logging: false });
 
         // Define models
-        SkillAssignment = SkillAssignmentModel(sequelize, DataTypes, Staff, Skill, SkillLevel);
-        Staff = StaffModel(sequelize, DataTypes);
-        Skill = SkillModel(sequelize, DataTypes);
-        SkillLevel = SkillLevelModel(sequelize, DataTypes);
+        User = UserModel(sequelize, DataTypes, { });  // Adjust if User requires other models
+        Skill = SkillModel(sequelize, DataTypes, { });
+        SkillLevel = SkillLevelModel(sequelize, DataTypes, { });
+        SkillAssignment = SkillAssignmentModel(sequelize, DataTypes, User, Skill, SkillLevel);
 
         // Sync models
         await sequelize.sync({ force: true });
@@ -36,7 +36,7 @@ describe('SkillAssignment Model', () => {
         expect(SkillAssignment.rawAttributes.expiry_date.type).toBeInstanceOf(DataTypes.DATE);
     });
 
-    it('should have associations with Staff, Skill, and SkillLevel models', () => {
+    it('should have associations with User, Skill, and SkillLevel models', () => {
         expect(SkillAssignment.associations.staff).toBeDefined();
         expect(SkillAssignment.associations.skill).toBeDefined();
         expect(SkillAssignment.associations.skillLevel).toBeDefined();
