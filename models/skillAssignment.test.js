@@ -1,7 +1,7 @@
 // models/skillAssignment.test.js
 const { Sequelize, DataTypes } = require('sequelize');
 const SkillAssignmentModel = require('./skillAssignment'); // Adjust path if needed
-const StaffModel = require('./staff'); // Adjust path if needed
+const StaffModel = require('./user'); // Adjust path if needed
 const SkillModel = require('./skill'); // Adjust path if needed
 const SkillLevelModel = require('./skillLevel'); // Adjust path if needed
 const { setupDB } = require('../config'); // Adjust path if needed
