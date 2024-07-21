@@ -4,6 +4,7 @@ const utilities = require('../utilities/utility');
 const db = require('../models');
 const Skill = db.skill;
 const SkillCategory = db.skillCategory;
+const SkillAssignment = db.skillAssignment;
 
 
 getAll = async (req, res) =>{
@@ -132,7 +133,7 @@ update = async (req, res) =>{
             skill.skill_category_id.length <1){
         throw new Error("Essential fields missing");
         }
-        skillUpdate = await Skill.update(skill, {where: { id: id }});
+        skill = await Skill.create(skill);
         res.status(201).json(skill);
         }
         catch (error){
@@ -155,8 +156,18 @@ deleting = async (req, res) =>{
         return utilities.formatErrorResponse(res,400,error.message);
         }
 
+        try{
+            const doesSkillHaveAssignments = await SkillAssignment.findAll({where: {skill_id: id}});
+            if(doesSkillHaveAssignments.length!==0 || doesSkillHaveAssignments!==null){
+                throw new Error("this skill has assignments, delete these first.");
+            }
+        }
+        catch(error){
+            return utilities.formatErrorResponse(res,400,error.message);
+            }
+
     try{
-        const deleted = await SkillCategory.destroy({where: { id: id }});
+        const deleted = await Skill.destroy({where: { id: id }});
         
         if (deleted==0) {
             throw new Error("Id not found");
