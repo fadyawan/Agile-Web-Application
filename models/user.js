@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize, SystemRole) => {
     },
     job_role: {
         type: Sequelize.STRING,
-    },              
+    },             
     },
     {
       timestamps: false,
