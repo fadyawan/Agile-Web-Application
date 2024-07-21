@@ -27,13 +27,13 @@ getById = async (req, res) =>{
 
 create  = async (req, res) =>{
     var skillLevel = {
-        skillLevel: req.body.skill_level,
+        skill_level: req.body.skill_level,
         };
 
 
         try{
-            if (skillLevel.skillLevel==null ||
-            skillLevel.skillLevel.length <1){
+            if (skillLevel.skill_level==null ||
+            skillLevel.skill_level.length <1){
             throw new Error("Essential fields missing");
             }
             skillLevel = await SkillLevel.create(skillLevel);
@@ -68,12 +68,12 @@ update  = async (req, res) =>{
     const id =req.body.id;
 
     const skillLevel = {
-        skillLevel: req.body.skill_level
+        skill_level: req.body.skill_level
     };
 
     try{
-        if (skillLevel.skillLevel == null ||
-            skillLevel.skillLevel.length <1){
+        if (skillLevel.skill_level == null ||
+            skillLevel.skill_level.length <1){
             throw new Error("Missing essential fields");
         }
 

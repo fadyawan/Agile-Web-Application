@@ -27,13 +27,13 @@ getById = async (req, res) =>{
 
 create  = async (req, res) =>{
     var systemRole = {
-        systemRole: req.body.system_role,
+        system_role: req.body.system_role,
         };
 
 
         try{
-            if (systemRole.systemRole==null ||
-            systemRole.systemRole.length <1){
+            if (systemRole.system_role==null ||
+            systemRole.system_role.length <1){
             throw new Error("Essential fields missing");
             }
             systemRole = await SystemRole.create(systemRole);
@@ -68,12 +68,12 @@ update  = async (req, res) =>{
     const id =req.body.id;
 
     const systemRole = {
-        systemRole: req.body.system_role
+        system_role: req.body.system_role
     };
 
     try{
-        if (systemRole.systemRole == null ||
-            systemRole.systemRole.length <1){
+        if (systemRole.system_role == null ||
+            systemRole.system_role.length <1){
             throw new Error("Missing essential fields");
         }
 

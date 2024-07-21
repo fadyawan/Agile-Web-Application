@@ -3,7 +3,7 @@ const utilities = require('../utilities/utility');
 
 const db = require('../models');
 const StaffAssignment = db.staffAssignment;
-const User = db.User
+const User = db.user
 
 getAll  = async (req, res) =>{
     const staffAssignment = await StaffAssignment.findAll();
