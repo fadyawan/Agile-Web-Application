@@ -80,7 +80,7 @@ deleting  = async (req, res) =>{
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
         }
 
 
@@ -94,7 +94,7 @@ deleting  = async (req, res) =>{
         res.status(200).send("user deleted");
     }
     catch(error){
-        utilities.formatErrorResponse(res,404,error.message);
+        return utilities.formatErrorResponse(res,404,error.message);
     }
     
 }
@@ -118,7 +118,7 @@ update  = async (req, res) =>{
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
         }
     
     try{
@@ -128,7 +128,7 @@ update  = async (req, res) =>{
         }
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
     try{
@@ -148,7 +148,7 @@ update  = async (req, res) =>{
         res.status(201).json(user);
         }
         catch (error){
-        utilities.formatErrorResponse(res,
+        return utilities.formatErrorResponse(res,
         400,
         error.message);
         } 
@@ -168,7 +168,7 @@ getByName  = async (req, res) =>{
         res.status(200).json(user);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -185,7 +185,7 @@ getByJobRole  = async (req, res) =>{
         res.status(200).json(user);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -203,7 +203,7 @@ getBySystemRole  = async (req, res) =>{
         const sysRoleId = sys.id;
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 
     try {
@@ -215,7 +215,7 @@ getBySystemRole  = async (req, res) =>{
         res.status(200).json(user);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 

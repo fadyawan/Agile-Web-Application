@@ -23,7 +23,7 @@ getSkillById = async (req, res) =>{
         res.status(200).json(skill);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -39,7 +39,7 @@ getSkillByDescription = async (req, res) =>{
         res.status(200).json(skill);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -56,7 +56,7 @@ getSkillByCategory = async (req, res) =>{
         res.status(200).json(skill);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -110,7 +110,7 @@ update = async (req, res) =>{
             }
         }
         catch(error){
-                utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
             }
 
     try{
@@ -120,7 +120,7 @@ update = async (req, res) =>{
         }
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
 
@@ -136,7 +136,7 @@ update = async (req, res) =>{
         res.status(201).json(skill);
         }
         catch (error){
-        utilities.formatErrorResponse(res,
+            return utilities.formatErrorResponse(res,
         400,
         error.message);
         } 
@@ -152,7 +152,7 @@ deleting = async (req, res) =>{
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
         }
 
     try{
@@ -165,7 +165,7 @@ deleting = async (req, res) =>{
         res.status(200).send("skill deleted");
     }
     catch(error){
-        utilities.formatErrorResponse(res,404,error.message);
+        return utilities.formatErrorResponse(res,404,error.message);
     }
 }
 

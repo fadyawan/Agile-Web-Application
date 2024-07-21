@@ -22,7 +22,7 @@ getById = async (req, res) =>{
         res.status(200).json(staffAssignment);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -36,7 +36,7 @@ getByStaff = async (req, res) =>{
         }
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
     try {
@@ -48,7 +48,7 @@ getByStaff = async (req, res) =>{
         res.status(200).json(staffAssignment);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -62,7 +62,7 @@ getByManager = async (req, res) =>{
         }
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
     try {
@@ -74,7 +74,7 @@ getByManager = async (req, res) =>{
         res.status(200).json(staffAssignment);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -85,8 +85,6 @@ create  = async (req, res) =>{
         staff_id: req.body.staff_id,
         manager_id: req.body.manager_id
     };
-
-
 
         try{
             if (staffAssignment.staff_id==null ||
@@ -114,7 +112,7 @@ deleting  = async (req, res) =>{
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
         }
 
     try{
@@ -127,7 +125,7 @@ deleting  = async (req, res) =>{
         res.status(200).send("staff assignment deleted");
     }
     catch(error){
-        utilities.formatErrorResponse(res,404,error.message);
+        return utilities.formatErrorResponse(res,404,error.message);
     }
     
 }

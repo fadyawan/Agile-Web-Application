@@ -20,7 +20,7 @@ getById = async (req, res) =>{
         res.status(200).json(skillCategory);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -39,7 +39,7 @@ create  = async (req, res) =>{
             res.status(201).json(skillCategory);
             }
             catch (error){
-            utilities.formatErrorResponse(res,
+                return utilities.formatErrorResponse(res,
             400,
             error.message);
             }

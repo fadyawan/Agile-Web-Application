@@ -25,7 +25,7 @@ getById = async (req, res) =>{
         res.status(200).json(skillAssignment);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -40,7 +40,7 @@ getBySkills = async (req, res) =>{
         const skillId = skill.id;
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
 
@@ -51,7 +51,7 @@ getBySkills = async (req, res) =>{
         }
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 }
 
@@ -67,7 +67,7 @@ getByStaff = async (req, res) =>{
         const staffId = staff.id;
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
 
@@ -78,7 +78,7 @@ getByStaff = async (req, res) =>{
         }
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 }
 
@@ -105,7 +105,7 @@ create = async (req, res) =>{
         res.status(201).json(skillAssignment);
       }
      catch (error){
-          utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
      }
 
 }
@@ -133,7 +133,7 @@ try{
     res.status(200).send("skill assignment deleted");
   }
  catch(error){
-   utilities.formatErrorResponse(res,404,error.message);
+    return utilities.formatErrorResponse(res,404,error.message);
  }
 
 }
@@ -153,7 +153,7 @@ update  = async (req, res) =>{
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
         }
 
     try{
@@ -169,7 +169,7 @@ update  = async (req, res) =>{
          res.status(200).json(skillAssignment);
        }
       catch (error){
-         utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
        }  
 }
 
@@ -194,7 +194,7 @@ getAllStaffDetails = async (req, res) => {
 
         res.status(200).json(staffDetails);
     } catch (error) {
-        utilities.formatErrorResponse(res, 500, error.message);
+        return utilities.formatErrorResponse(res, 500, error.message);
     }
 }
 

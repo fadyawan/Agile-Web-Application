@@ -1,5 +1,3 @@
-const { user } = require(".");
-
 module.exports = (sequelize, Sequelize, SystemRole) => {
     const User = sequelize.define("user",
     {
