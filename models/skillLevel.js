@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const SkillLevel = sequelize.define("skill_level",
+    const SkillLevel = sequelize.define("SkillLevel",
     {
     skill_level: {
         type: Sequelize.STRING,
