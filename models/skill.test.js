@@ -10,7 +10,7 @@ describe('Skill Model', () => {
 
   beforeAll(async () => {
     // Initialize Sequelize instance
-    sequelize = new Sequelize('sqlite::memory:', { logging: false });
+    sequelize =  Sequelize('sqlite::memory:', { logging: false });
 
     // Define models
     SkillCategory = SkillCategoryModel(sequelize, Sequelize);
@@ -59,3 +59,4 @@ describe('Skill Model', () => {
     expect(fetchedSkill.skill_category.description).toBe('Programming');
   });
 });
+
