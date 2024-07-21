@@ -49,6 +49,17 @@ create  = async (req, res) =>{
 deleting  = async (req, res) =>{
 
     const id = req.body.id;
+
+    try{
+        const doesLevelExist = await SkillLevel.findAll({where: {id: id}});
+        if(doesLevelExist.length==0 || doesLevelExist==null){
+            throw new Error("Unable to find the  skill level with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+
     try{
         const deleted = await SkillLevel.destroy({where: { id: id }});
         
@@ -70,6 +81,17 @@ update  = async (req, res) =>{
     const skillLevel = {
         skillLevel: req.body.skill_level
     };
+
+    try{
+        const doesLevelExist = await SkillLevel.findAll({where: {id: id}});
+        if(doesLevelExist.length==0 || doesLevelExist==null){
+            throw new Error("Unable to find the  skill level with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+
 
     try{
         if (skillLevel.skillLevel == null ||

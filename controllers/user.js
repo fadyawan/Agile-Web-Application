@@ -72,6 +72,18 @@ create  = async (req, res) =>{
 deleting  = async (req, res) =>{
 
     const id = req.body.id;
+
+    try{
+        const doesUserExist = await User.findAll({where: {id: id}});
+        if(doesUserExist.length==0 || doesUserExist==null){
+            throw new Error("Unable to find the user with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+
+
     try{
         const deleted = await User.destroy({where: { id: id }});
         
@@ -99,6 +111,16 @@ update  = async (req, res) =>{
         systemRoleId: req.body.system_role_id
     };
 
+    try{
+        const doesUserExist = await User.findAll({where: {id: id}});
+        if(doesUserExist.length==0 || doesUserExist==null){
+            throw new Error("Unable to find the user with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+    
     try{
         const systemRole = await SystemRole.findAll({where: {systemRoleId: id}});
         if(systemRole.length==0){

@@ -31,6 +31,8 @@ create  = async (req, res) =>{
         };
 
 
+
+
         try{
             if (systemRole.systemRole==null ||
             systemRole.systemRole.length <1){
@@ -49,6 +51,17 @@ create  = async (req, res) =>{
 deleting  = async (req, res) =>{
 
     const id = req.body.id;
+
+    try{
+        const doesRoleExist = await SystemRole.findAll({where: {id: id}});
+        if(doesRoleExist.length==0 || doesRoleExist==null){
+            throw new Error("Unable to find the system role with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+
     try{
         const deleted = await SystemRole.destroy({where: { id: id }});
         
@@ -70,6 +83,16 @@ update  = async (req, res) =>{
     const systemRole = {
         systemRole: req.body.system_role
     };
+
+    try{
+        const doesRoleExist = await SystemRole.findAll({where: {id: id}});
+        if(doesRoleExist.length==0 || doesRoleExist==null){
+            throw new Error("Unable to find the system role with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
 
     try{
         if (systemRole.systemRole == null ||
