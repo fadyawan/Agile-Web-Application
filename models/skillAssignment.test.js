@@ -4,7 +4,7 @@ const SkillAssignmentModel = require('./skillAssignment'); // Adjust path if nee
 const StaffModel = require('./user'); // Adjust path if needed
 const SkillModel = require('./skill'); // Adjust path if needed
 const SkillLevelModel = require('./skillLevel'); // Adjust path if needed
-const { setupDB } = require('../config'); // Adjust path if needed
+const { setupDB } = require('../config/config'); // Adjust path if needed
 
 describe('SkillAssignment Model', () => {
   let sequelize;
