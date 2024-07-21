@@ -102,13 +102,13 @@ deleting  = async (req, res) =>{
 update  = async (req, res) =>{
     const id =req.body.id;
 
-    const user = {
-        firstName: req.body.firstname,
+    var user = {
+        firstname: req.body.firstname,
         surname: req.body.surname,
         username: req.body.username,
         password: req.body.password,
-        jobRole: req.body.job_role,
-        systemRoleId: req.body.system_role_id
+        job_role: req.body.job_role,
+        system_role_id: req.body.system_role_id
     };
 
     try{
@@ -122,9 +122,9 @@ update  = async (req, res) =>{
         }
     
     try{
-        const systemRole = await SystemRole.findAll({where: {systemRoleId: id}});
+        const systemRole = await SystemRole.findAll({where: {id: user.system_role_id}});
         if(systemRole.length==0){
-            throw new Error("Unable to find the system role with id" + id);
+            throw new Error("Unable to find the system role with id " + id);
         }
     }
     catch(error){
@@ -132,19 +132,21 @@ update  = async (req, res) =>{
     }
 
     try{
-        if (user.firstName==null ||
-        user.firstName.length <1 ||
+        if (user.firstname==null ||
+        user.firstname.length <1 ||
         user.surname==null ||
         user.surname.length <1 ||
         user.username==null ||
         user.username.length <1 ||
         user.password==null ||
         user.password.length <1 ||
-        user.jobRole==null ||
-        user.jobRole.length <1){
+        user.job_role==null ||
+        user.job_role.length <1){
         throw new Error("Essential fields missing");
         }
-        user = await User.create(user);
+        userUpdate = await User.update(user,
+            {where: { id: id }}
+        );
         res.status(201).json(user);
         }
         catch (error){
