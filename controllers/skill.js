@@ -7,7 +7,7 @@ const SkillCategory = db.SkillCategory;
 
 
 getAll = async (req, res) =>{
-    const skill = await Skill.findAll();
+    const skill = await skill.findAll();
         res.status(200).json(skill);
 }
 

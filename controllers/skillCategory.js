@@ -4,7 +4,7 @@ const db = require('../models');
 const SkillCategory = db.SkillCategory;
 
 getAll  = async (req, res) =>{
-    const skillCategory = await SkillCategory.findAll();
+    const skillCategory = await skill_category.findAll();
         res.status(200).json(skillCategory);
 }
 

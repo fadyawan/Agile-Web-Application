@@ -9,7 +9,7 @@ const Staff = db.User;
 const SkillLevel = db.SkillLevel;
 
 getAll  = async (req, res) =>{
-    const skillAssignment = await SkillAssignment.findAll();
+    const skillAssignment = await skill_assignment.findAll();
         res.status(200).json(skillAssignment);
 }
 
