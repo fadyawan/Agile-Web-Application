@@ -5,7 +5,7 @@ const db = require('../models');
 const SystemRole = db.SystemRole;
 
 getAll  = async (req, res) =>{
-    const systemRole = await SystemRole.findAll();
+    const systemRole = async(await SystemRole.findAll());
         res.status(200).json(systemRole);
 }
 
