@@ -11,7 +11,7 @@ testApp.use('/api/skill', router);
 describe('Skill Router', () => {
   // Test GET /api/skill
   it('should respond with all skills', async () => {
-    const response = await request(testApp).get('/api/skill');
+    const response = await request(testApp).get('/api/skill/');
     expect(response.status).toBe(200);
     // Add more assertions based on the expected response
   });
