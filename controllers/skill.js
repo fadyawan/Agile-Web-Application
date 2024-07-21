@@ -133,7 +133,7 @@ update = async (req, res) =>{
             skill.skill_category_id.length <1){
         throw new Error("Essential fields missing");
         }
-        skill = await Skill.create(skill);
+        skillUpdate = await Skill.update(skill, {where: { id: id }});
         res.status(201).json(skill);
         }
         catch (error){
