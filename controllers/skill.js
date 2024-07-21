@@ -47,7 +47,7 @@ getSkillByCategory = async (req, res) =>{
     const category = req.params.category;
 
     try {
-        const skillCategory = await Skill.findAll({where: {description: category}});
+        const skillCategory = await SkillCategory.findAll({where: {description: category}});
 
         if(skillCategory==null || skillCategory.length==0){
             throw new Error("Unable to find the skill category " + category);

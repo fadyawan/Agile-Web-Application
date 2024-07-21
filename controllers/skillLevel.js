@@ -83,10 +83,6 @@ update  = async (req, res) =>{
     };
 
     try{
-<<<<<<< HEAD
-        if (skillLevel.skill_level == null ||
-            skillLevel.skill_level.length <1){
-=======
         const doesLevelExist = await SkillLevel.findAll({where: {id: id}});
         if(doesLevelExist.length==0 || doesLevelExist==null){
             throw new Error("Unable to find the  skill level with id" + id);
@@ -100,7 +96,6 @@ update  = async (req, res) =>{
     try{
         if (skillLevel.skillLevel == null ||
             skillLevel.skillLevel.length <1){
->>>>>>> fecc1d9d95bade9dbf79de9d24843b87c55d2e83
             throw new Error("Missing essential fields");
         }
 
