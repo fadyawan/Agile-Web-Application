@@ -35,13 +35,13 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 
-db.skillCategory = SkillCategory(sequelize, Sequelize);
-db.skill = Skill(sequelize, Sequelize, db.skillCategory);
-db.skillLevel = SkillLevel(sequelize, Sequelize);
-db.systemRole = SystemRole(sequelize, Sequelize);
-db.user = User(sequelize, Sequelize, db.systemRole);
-db.skillAssignment = SkillAssignment(sequelize, Sequelize, db.user, db.skill, db.skillLevel);
-db.staffAssignment = StaffAssignment(sequelize, Sequelize, db.user);
+db.skillCategory = SkillCategory(sequelize);
+db.skill = Skill(sequelize,  db.skillCategory);
+db.skillLevel = SkillLevel(sequelize);
+db.systemRole = SystemRole(sequelize);
+db.user = User(sequelize, db.systemRole);
+db.skillAssignment = SkillAssignment(sequelize, db.user, db.skill, db.skillLevel);
+db.staffAssignment = StaffAssignment(sequelize, db.user);
 
 
 

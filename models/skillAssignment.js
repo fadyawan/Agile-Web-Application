@@ -1,8 +1,8 @@
-module.exports = (sequelize, Sequelize, Staff, Skill, SkillLevel) => {
+module.exports = (sequelize, Staff, Skill, SkillLevel) => {
     const SkillAssignment = sequelize.define("skill_assignment",
     {
     expiry_date: {
-        type: Sequelize.DATE
+        type: sequelize.DATE
     }         
     },
     {

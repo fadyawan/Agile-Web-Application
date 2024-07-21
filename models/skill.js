@@ -1,7 +1,7 @@
-module.exports = (sequelize, Sequelize, SkillCategory) => {
+module.exports = (sequelize, SkillCategory) => {
     const Skill = sequelize.define("Skill", {
         description: {
-            type: Sequelize.STRING,
+            type: sequelize.STRING,
             allowNull: false
         }
     }, {

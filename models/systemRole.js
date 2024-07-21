@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize) => {
     const SystemRole = sequelize.define("system_role",
     {
     system_role: {

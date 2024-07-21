@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize, User) => {
+module.exports = (sequelize,  User) => {
     const StaffAssignment = sequelize.define("staff_assignment",
     {
       timestamps: false,
