@@ -82,41 +82,22 @@ getByManager = async (req, res) =>{
 
 create  = async (req, res) =>{
     var staffAssignment = {
-        staffId: req.body.staff_id,
-        managerId: req.body.manager_id
+        staff_id: req.body.staff_id,
+        manager_id: req.body.manager_id
     };
 
-    try{
-        const user = await User.findAll({where: {id: staffAssignment.staffId}});
-        if(user.length==0){
-            throw new Error("Unable to find the staff member with id" + id);
-        }
-    }
-    catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
-    }
-
-    try{
-        const user = await User.findAll({where: {id: staffAssignment.managerId}});
-        if(user.length==0){
-            throw new Error("Unable to find the manager with id" + id);
-        }
-    }
-    catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
-    }
 
 
         try{
-            if (staffAssignment.staffId==null ||
-            staffAssignment.managerId==null){
+            if (staffAssignment.staff_id==null ||
+            staffAssignment.manager_id==null){
             throw new Error("Essential fields missing");
             }
             createAssignment = await StaffAssignment.create(staffAssignment);
             res.status(201).json(staffAssignment);
             }
             catch (error){
-            utilities.formatErrorResponse(res,
+            return utilities.formatErrorResponse(res,
             400,
             error.message);
             }

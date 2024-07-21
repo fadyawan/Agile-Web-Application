@@ -63,25 +63,25 @@ getSkillByCategory = async (req, res) =>{
 create = async (req, res) =>{
     var skill = {
         description: req.body.description,
-        skillCategoryId: req.body.skill_category_id
+        skill_category_id: req.body.skill_category_id
         };
 
 
         try{
-            const category = await SkillCategory.findAll({where: {id: skill.skillCategoryId}});
+            const category = await SkillCategory.findAll({where: {id: skill.skill_category_id}});
             if(category.length==0){
-                throw new Error("Unable to find the skill category with id" + category);
+                throw new Error("Unable to find the skill category with id " + skill_category_id);
             }
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 
         try{
             if (skill.description==null ||
                 skill.description.length <1 ||
-                skill.skillCategoryId==null ||
-                skill.skillCategoryId.length <1
+                skill.skill_category_id==null ||
+                skill.skill_category_id.length <1
             ){
             throw new Error("Essential fields missing");
             }
@@ -89,7 +89,7 @@ create = async (req, res) =>{
             res.status(201).json(skill);
             }
             catch (error){
-            utilities.formatErrorResponse(res,
+            return utilities.formatErrorResponse(res,
             400,
             error.message);
             }

@@ -83,52 +83,11 @@ getByStaff = async (req, res) =>{
 }
 
 create = async (req, res) =>{
-    const firstname = req.body.firstname;
-    const surname = req.body.surname;
-    try{
-        const staff = await Staff.findAll({where: {firstname: firstname, surname: surname}});
-        if(staff.length==0){
-            throw new Error("Unable to find the staff member: " + firstname + " " + surname);
-        }
-        const staffId = staff.id;
-    }
-    catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
-    }
-
-
-
-    const skillInput = req.body.skill;
-    try{
-        const skill = await Skill.findAll({where: {description: skillInput}});
-        if(skill.length==0){
-            throw new Error("Unable to find the skill: " + skillInput);
-        }
-        const skillId = skill.id;
-    }
-    catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
-    }
-
-
-    const skillLevelInput = req.body.skill_level;
-    try{
-        const skillLevel = await SkillLevel.findAll({where: {skill_level: skillLevelInput}});
-        if(skillLevel.length==0){
-            throw new Error(skillLevelInput +  " Is not an applicable skill level.");
-        }
-        const skillLevelId = skillLevel.id;
-    }
-    catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
-    }
-
-    const expiryInput = req.body.expiry_date;
 
     var skillAssignment = {
-        staff_id: staffId,
-        skill_id: skillId,
-        skill_level_id: skillLevelId,
+        staff_id: req.body.staff_id,
+        skill_id: req.body.skill_id,
+        skill_level_id: req.body.skill_level_id,
         expiry_date: req.body.expiry_date,
     };
 
@@ -161,7 +120,7 @@ try{
     }
 }
 catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
 try{

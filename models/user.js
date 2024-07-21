@@ -1,3 +1,5 @@
+const { user } = require(".");
+
 module.exports = (sequelize, Sequelize, SystemRole) => {
     const User = sequelize.define("user",
     {
@@ -15,7 +17,7 @@ module.exports = (sequelize, Sequelize, SystemRole) => {
     },
     job_role: {
         type: Sequelize.STRING,
-    },              
+    },             
     },
     {
       timestamps: false,
