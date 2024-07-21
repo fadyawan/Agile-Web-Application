@@ -1,9 +1,10 @@
 // models/skillAssignment.test.js
 const { Sequelize, DataTypes } = require('sequelize');
-const SkillAssignmentModel = require('./skillAssignment'); // Adjust the path as needed
-const StaffModel = require('./user'); // Adjust the path as needed
-const SkillModel = require('./skill'); // Adjust the path as needed
-const SkillLevelModel = require('./skillLevel'); // Adjust the path as needed
+const SkillAssignmentModel = require('./skillAssignment'); // Adjust path if needed
+const StaffModel = require('./staff'); // Adjust path if needed
+const SkillModel = require('./skill'); // Adjust path if needed
+const SkillLevelModel = require('./skillLevel'); // Adjust path if needed
+const { setupDB } = require('../config'); // Adjust path if needed
 
 describe('SkillAssignment Model', () => {
   let sequelize;
@@ -13,14 +14,16 @@ describe('SkillAssignment Model', () => {
   let SkillLevel;
 
   beforeAll(async () => {
-    // Initialize Sequelize instance
+    // Setup Sequelize instance
     sequelize = new Sequelize('sqlite::memory:', { logging: false });
+    
+    // Initialize models
+    const db = setupDB(sequelize, Sequelize); // Adjust based on your actual setup
 
-    // Define models
-    Staff = StaffModel(sequelize, Sequelize);
-    Skill = SkillModel(sequelize, Sequelize);
-    SkillLevel = SkillLevelModel(sequelize, Sequelize);
-    SkillAssignment = SkillAssignmentModel(sequelize, Sequelize, Staff, Skill, SkillLevel);
+    Staff = db.staffAssignment.associations.staff.target;
+    Skill = db.skillAssignment.associations.skill.target;
+    SkillLevel = db.skillAssignment.associations.skillLevel.target;
+    SkillAssignment = db.skillAssignment;
 
     // Sync the database
     await sequelize.sync({ force: true });
@@ -43,7 +46,7 @@ describe('SkillAssignment Model', () => {
 
     expect(associations.staff).toBeDefined();
     expect(associations.staff.associationType).toBe('BelongsTo');
-    expect(associations.staff.target.name).toBe('Staff');
+    expect(associations.staff.target.name).toBe('User');
     expect(associations.staff.options.foreignKey).toBe('staff_id');
 
     expect(associations.skill).toBeDefined();
