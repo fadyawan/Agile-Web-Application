@@ -158,7 +158,7 @@ deleting = async (req, res) =>{
 
         try{
             const doesSkillHaveAssignments = await SkillAssignment.findAll({where: {skill_id: id}});
-            if(doesSkillHaveAssignments.length!==0 || doesSkillHaveAssignments!==null){
+            if(doesSkillHaveAssignments.length!==0){
                 throw new Error("this skill has assignments, delete these first.");
             }
         }
