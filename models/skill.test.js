@@ -11,10 +11,10 @@ describe('Skill Model', () => {
     sequelize = new Sequelize('sqlite::memory:'); // Using in-memory SQLite for testing
 
     // Define the SkillCategory model
-    skillCategory = SkillCategory(sequelize, DataTypes);
+    skillCategory = new SkillCategory(sequelize, DataTypes);
 
     // Define the Skill model
-    skill = Skill(sequelize, DataTypes, SkillCategory);
+    skill = new Skill(sequelize, DataTypes, SkillCategory);
 
     // Sync the models with the database
     await sequelize.sync({ force: true });
