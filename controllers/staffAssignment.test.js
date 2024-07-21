@@ -1,158 +1,118 @@
-const staffAssignmentController = require('./staffAssignment.js');
-const utilities = require('../utilities/utility');
-const db = require('../models');
-const { StaffAssignment, User } = db;
+// tests/staffAssignment.test.js
 
-jest.mock('../models');
-jest.mock('../utilities/utility');
+const SequelizeMock = require('sequelize-mock');
+const express = require('express');
+const request = require('supertest');
+const utilities = require('../utilities/utility');  // Adjust the path as necessary
+const staffAssignmentController = require('../controllers/staffAssignment');
 
-describe('Staff Assignment Controller', () => {
-  let req, res;
+// Initialize Sequelize Mock
+const DBConnectionMock = new SequelizeMock();
 
-  beforeEach(() => {
-    req = { params: {}, body: {} };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      send: jest.fn(),
-    };
-  });
+// Mock the StaffAssignment and User models
+const StaffAssignmentMock = DBConnectionMock.define('StaffAssignment', {
+    id: 1,
+    staff_id: 1,
+    manager_id: 2,
+});
+const UserMock = DBConnectionMock.define('User', {
+    id: 1,
+    firstname: 'John',
+    surname: 'Doe',
+});
 
-  describe('getAll', () => {
-    it('should return all staff assignments', async () => {
-      const staffAssignments = [{ id: 1, staffId: 1, managerId: 1 }];
-      StaffAssignment.findAll.mockResolvedValue(staffAssignments);
+// Mock the utilities
+jest.mock('../utilities/utility', () => ({
+    formatErrorResponse: jest.fn((res, status, message) => res.status(status).json({ error: message })),
+}));
 
-      await staffAssignmentController.getAll(req, res);
+// Mock the db object
+jest.mock('../models', () => ({
+    staffAssignment: StaffAssignmentMock,
+    user: UserMock,
+}));
 
-      expect(StaffAssignment.findAll).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(staffAssignments);
-    });
-  });
+// Set up express app for testing
+const app = express();
+app.use(express.json()); // To parse JSON bodies
+app.use('/staffAssignments', require('../routes/staffAssignment'));  // Adjust the path as necessary
 
-  describe('getById', () => {
-    it('should return staff assignment by id', async () => {
-      const staffAssignment = { id: 1, staffId: 1, managerId: 1 };
-      StaffAssignment.findByPk.mockResolvedValue(staffAssignment);
-      req.params.id = 1;
-
-      await staffAssignmentController.getById(req, res);
-
-      expect(StaffAssignment.findByPk).toHaveBeenCalledWith(1);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(staffAssignment);
-    });
-
-    it('should handle staff assignment not found', async () => {
-      StaffAssignment.findByPk.mockResolvedValue(null);
-      req.params.id = 1;
-
-      await staffAssignmentController.getById(req, res);
-
-      expect(StaffAssignment.findByPk).toHaveBeenCalledWith(1);
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find the staff assignment with id 1');
-    });
-  });
-
-  describe('getByStaff', () => {
-    it('should return assignments for staff by staff id', async () => {
-      const staff = { id: 1, name: 'John Doe' };
-      const staffAssignments = [{ id: 1, staffId: 1, managerId: 2 }];
-      User.findByPk.mockResolvedValue(staff);
-      StaffAssignment.findAll.mockResolvedValue(staffAssignments);
-      req.params.staff_id = 1;
-
-      await staffAssignmentController.getByStaff(req, res);
-
-      expect(User.findByPk).toHaveBeenCalledWith(1);
-      expect(StaffAssignment.findAll).toHaveBeenCalledWith({ where: { staff_id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(staffAssignments);
+describe('StaffAssignment Controller', () => {
+    it('should get all staff assignments', async () => {
+        const response = await request(app).get('/staffAssignments/');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual([{
+            id: 1,
+            staff_id: 1,
+            manager_id: 2,
+        }]);
     });
 
-    it('should handle staff not found', async () => {
-      User.findByPk.mockResolvedValue(null);
-      req.params.staff_id = 1;
-
-      await staffAssignmentController.getByStaff(req, res);
-
-      expect(User.findByPk).toHaveBeenCalledWith(1);
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find staff with id 1');
-    });
-  });
-
-  describe('getByManager', () => {
-    it('should return assignments for manager by manager id', async () => {
-      const manager = { id: 1, name: 'Jane Smith' };
-      const staffAssignments = [{ id: 1, staffId: 2, managerId: 1 }];
-      User.findByPk.mockResolvedValue(manager);
-      StaffAssignment.findAll.mockResolvedValue(staffAssignments);
-      req.params.manager_id = 1;
-
-      await staffAssignmentController.getByManager(req, res);
-
-      expect(User.findByPk).toHaveBeenCalledWith(1);
-      expect(StaffAssignment.findAll).toHaveBeenCalledWith({ where: { manager_id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(staffAssignments);
+    it('should get a staff assignment by ID', async () => {
+        const response = await request(app).get('/staffAssignments/id/1');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            id: 1,
+            staff_id: 1,
+            manager_id: 2,
+        });
     });
 
-    it('should handle manager not found', async () => {
-      User.findByPk.mockResolvedValue(null);
-      req.params.manager_id = 1;
-
-      await staffAssignmentController.getByManager(req, res);
-
-      expect(User.findByPk).toHaveBeenCalledWith(1);
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find manager with id 1');
+    it('should return error for non-existent staff assignment by ID', async () => {
+        StaffAssignmentMock.findByPk.mockReturnValueOnce(null);
+        const response = await request(app).get('/staffAssignments/id/99');
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            error: 'Unable to find the staff assignment with id 99',
+        });
     });
-  });
 
-  describe('create', () => {
+    it('should get assignments by staff ID', async () => {
+        const response = await request(app).get('/staffAssignments/staff/1');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual([{
+            id: 1,
+            staff_id: 1,
+            manager_id: 2,
+        }]);
+    });
+
+    it('should return error for non-existent staff by ID', async () => {
+        UserMock.findByPk.mockReturnValueOnce(null);
+        const response = await request(app).get('/staffAssignments/staff/99');
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            error: 'Unable to find staff with id 99',
+        });
+    });
+
     it('should create a new staff assignment', async () => {
-      const newStaffAssignment = { id: 1, staffId: 1, managerId: 1 };
-      req.body = { staff_id: 1, manager_id: 1 };
-      User.findAll.mockResolvedValue([{ id: 1 }]);
-      StaffAssignment.create.mockResolvedValue(newStaffAssignment);
-
-      await staffAssignmentController.create(req, res);
-
-      expect(User.findAll).toHaveBeenCalledTimes(2);
-      expect(StaffAssignment.create).toHaveBeenCalledWith({ staffId: 1, managerId: 1 });
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(newStaffAssignment);
+        const newStaffAssignment = { staff_id: 1, manager_id: 2 };
+        const response = await request(app).post('/staffAssignments/').send(newStaffAssignment);
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual(newStaffAssignment);
     });
 
-    it('should handle missing essential fields', async () => {
-      req.body = { staff_id: null, manager_id: null };
-
-      await staffAssignmentController.create(req, res);
-
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Essential fields missing');
+    it('should return error when creating a staff assignment with missing fields', async () => {
+        const response = await request(app).post('/staffAssignments/').send({});
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            error: 'Essential fields missing',
+        });
     });
-  });
 
-  describe('delete', () => {
     it('should delete a staff assignment', async () => {
-      req.body.id = 1;
-      StaffAssignment.destroy.mockResolvedValue(1);
-
-      await staffAssignmentController.deleting(req, res);
-
-      expect(StaffAssignment.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalledWith('staff assignment deleted');
+        const response = await request(app).delete('/staffAssignments/').send({ id: 1 });
+        expect(response.status).toBe(200);
+        expect(response.text).toBe('staff assignment deleted');
     });
 
-    it('should handle staff assignment not found for deletion', async () => {
-      req.body.id = 1;
-      StaffAssignment.destroy.mockResolvedValue(0);
-
-      await staffAssignmentController.deleting(req, res);
-
-      expect(StaffAssignment.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 404, 'Id not found');
+    it('should return error when deleting a non-existent staff assignment', async () => {
+        StaffAssignmentMock.destroy.mockReturnValueOnce(0);
+        const response = await request(app).delete('/staffAssignments/').send({ id: 99 });
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({
+            error: 'Id not found',
+        });
     });
-  });
 });

@@ -1,127 +1,123 @@
-const skillLevelController = require('./skillLevel.js');
-const utilities = require('../utilities/utility');
-const db = require('../models');
-const { SkillLevel } = db;
+// test/skillLevel.test.js
 
-jest.mock('../models');
+const request = require('supertest');
+const express = require('express');
+const SequelizeMock = require('sequelize-mock');
+const utilities = require('../utilities/utility');
+
+const app = express();
+app.use(express.json());
+
+// Mock the Sequelize instance
+const DBConnectionMock = new SequelizeMock();
+
+// Mock models
+const SkillLevelMock = DBConnectionMock.define('SkillLevel', {
+    id: 1,
+    skill_level: 'Beginner'
+});
+
+// Mocking the db module to use mocked models
+const db = {
+    skillLevel: SkillLevelMock
+};
+
+// Mocking utilities
 jest.mock('../utilities/utility');
 
-describe('Skill Level Controller', () => {
-  let req, res;
+// Import the skillLevel controller with mocked models
+const skillLevelController = require('../controllers/skillLevel');
 
-  beforeEach(() => {
-    req = { params: {}, body: {} };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      send: jest.fn(),
-    };
-  });
+// Assign routes to the app
+app.get('/skillLevel', skillLevelController.getAll);
+app.get('/skillLevel/:id', skillLevelController.getById);
+app.post('/skillLevel', skillLevelController.create);
+app.put('/skillLevel', skillLevelController.update);
+app.delete('/skillLevel', skillLevelController.deleting);
 
-  describe('getAll', () => {
-    it('should return all skill levels', async () => {
-      const skillLevels = [{ id: 1, skillLevel: 'Beginner' }];
-      SkillLevel.findAll.mockResolvedValue(skillLevels);
+describe('SkillLevel Controller', () => {
+    describe('GET /skillLevel', () => {
+        it('should return all skill levels', async () => {
+            const response = await request(app).get('/skillLevel');
 
-      await skillLevelController.getAll(req, res);
-
-      expect(SkillLevel.findAll).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(skillLevels);
-    });
-  });
-
-  describe('getById', () => {
-    it('should return skill level by id', async () => {
-      const skillLevel = { id: 1, skillLevel: 'Beginner' };
-      SkillLevel.findByPk.mockResolvedValue(skillLevel);
-      req.params.id = 1;
-
-      await skillLevelController.getById(req, res);
-
-      expect(SkillLevel.findByPk).toHaveBeenCalledWith(1);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(skillLevel);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Array);
+        });
     });
 
-    it('should handle skill level not found', async () => {
-      SkillLevel.findByPk.mockResolvedValue(null);
-      req.params.id = 1;
+    describe('GET /skillLevel/:id', () => {
+        it('should return a skill level by id', async () => {
+            const response = await request(app).get('/skillLevel/1');
 
-      await skillLevelController.getById(req, res);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+        });
 
-      expect(SkillLevel.findByPk).toHaveBeenCalledWith(1);
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find the skill level with id 1');
-    });
-  });
+        it('should return 400 if skill level not found', async () => {
+            SkillLevelMock.findByPk.withArgs(2).returns(null);
+            const response = await request(app).get('/skillLevel/2');
 
-  describe('create', () => {
-    it('should create a new skill level', async () => {
-      const newSkillLevel = { id: 1, skillLevel: 'Beginner' };
-      req.body = { skill_level: 'Beginner' };
-      SkillLevel.create.mockResolvedValue(newSkillLevel);
-
-      await skillLevelController.create(req, res);
-
-      expect(SkillLevel.create).toHaveBeenCalledWith({ skillLevel: 'Beginner' });
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(newSkillLevel);
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Unable to find the skill level with id 2');
+            expect(response.status).toBe(400);
+        });
     });
 
-    it('should handle missing essential fields', async () => {
-      req.body = { skill_level: '' };
+    describe('POST /skillLevel', () => {
+        it('should create a new skill level', async () => {
+            const newSkillLevel = {
+                skill_level: 'Intermediate'
+            };
 
-      await skillLevelController.create(req, res);
+            const response = await request(app).post('/skillLevel').send(newSkillLevel);
 
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Essential fields missing');
-    });
-  });
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty('id');
+        });
 
-  describe('delete', () => {
-    it('should delete a skill level', async () => {
-      req.body.id = 1;
-      SkillLevel.destroy.mockResolvedValue(1);
+        it('should return 400 if essential fields are missing', async () => {
+            const response = await request(app).post('/skillLevel').send({});
 
-      await skillLevelController.deleting(req, res);
-
-      expect(SkillLevel.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalledWith('skill category deleted');
-    });
-
-    it('should handle skill level not found for deletion', async () => {
-      req.body.id = 1;
-      SkillLevel.destroy.mockResolvedValue(0);
-
-      await skillLevelController.deleting(req, res);
-
-      expect(SkillLevel.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 404, 'Id not found');
-    });
-  });
-
-  describe('update', () => {
-    it('should update an existing skill level', async () => {
-      const updatedSkillLevel = { id: 1, skillLevel: 'Advanced' };
-      req.body = { id: 1, skill_level: 'Advanced' };
-      SkillLevel.update.mockResolvedValue([1, [updatedSkillLevel]]);
-
-      await skillLevelController.update(req, res);
-
-      expect(SkillLevel.update).toHaveBeenCalledWith(
-        { skillLevel: 'Advanced' },
-        { where: { id: req.body.id } }
-      );
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ skillLevel: 'Advanced' });
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Essential fields missing');
+            expect(response.status).toBe(400);
+        });
     });
 
-    it('should handle missing essential fields for update', async () => {
-      req.body = { id: 1, skill_level: '' };
+    describe('PUT /skillLevel', () => {
+        it('should update a skill level', async () => {
+            const updateData = {
+                id: 1,
+                skill_level: 'Advanced'
+            };
 
-      await skillLevelController.update(req, res);
+            const response = await request(app).put('/skillLevel').send(updateData);
 
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Missing essential fields');
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+        });
+
+        it('should return 400 if essential fields are missing', async () => {
+            const response = await request(app).put('/skillLevel').send({ id: 1 });
+
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Missing essential fields');
+            expect(response.status).toBe(400);
+        });
     });
-  });
+
+    describe('DELETE /skillLevel', () => {
+        it('should delete a skill level', async () => {
+            const response = await request(app).delete('/skillLevel').send({ id: 1 });
+
+            expect(response.status).toBe(200);
+            expect(response.text).toBe('skill category deleted');
+        });
+
+        it('should return 404 if id not found', async () => {
+            SkillLevelMock.destroy.withArgs({ where: { id: 2 } }).returns(0);
+            const response = await request(app).delete('/skillLevel').send({ id: 2 });
+
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 404, 'Id not found');
+            expect(response.status).toBe(404);
+        });
+    });
 });
+

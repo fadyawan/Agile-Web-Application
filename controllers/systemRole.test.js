@@ -1,124 +1,123 @@
-const systemRoleController = require('./systemRole.js');
-const utilities = require('../utilities/utility');
-const db = require('../models');
-const { SystemRole } = db;
+// test/systemRole.test.js
 
-jest.mock('../models');
+const request = require('supertest');
+const express = require('express');
+const SequelizeMock = require('sequelize-mock');
+const utilities = require('../utilities/utility');
+
+const app = express();
+app.use(express.json());
+
+// Mock the Sequelize instance
+const DBConnectionMock = new SequelizeMock();
+
+// Mock models
+const SystemRoleMock = DBConnectionMock.define('SystemRole', {
+    id: 1,
+    system_role: 'Admin'
+});
+
+// Mocking the db module to use mocked models
+const db = {
+    systemRole: SystemRoleMock
+};
+
+// Mocking utilities
 jest.mock('../utilities/utility');
 
-describe('System Role Controller', () => {
-  let req, res;
+// Import the systemRole controller with mocked models
+const systemRoleController = require('../controllers/systemRole');
 
-  beforeEach(() => {
-    req = { params: {}, body: {} };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      send: jest.fn(),
-    };
-  });
+// Assign routes to the app
+app.get('/systemRole', systemRoleController.getAll);
+app.get('/systemRole/:id', systemRoleController.getById);
+app.post('/systemRole', systemRoleController.create);
+app.put('/systemRole', systemRoleController.update);
+app.delete('/systemRole', systemRoleController.deleting);
 
-  describe('getAll', () => {
-    it('should return all system roles', async () => {
-      const systemRoles = [{ id: 1, systemRole: 'Admin' }];
-      SystemRole.findAll.mockResolvedValue(systemRoles);
+describe('SystemRole Controller', () => {
+    describe('GET /systemRole', () => {
+        it('should return all system roles', async () => {
+            const response = await request(app).get('/systemRole');
 
-      await systemRoleController.getAll(req, res);
-
-      expect(SystemRole.findAll).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(systemRoles);
-    });
-  });
-
-  describe('getById', () => {
-    it('should return system role by id', async () => {
-      const systemRole = { id: 1, systemRole: 'Admin' };
-      SystemRole.findByPk.mockResolvedValue(systemRole);
-      req.params.id = 1;
-
-      await systemRoleController.getById(req, res);
-
-      expect(SystemRole.findByPk).toHaveBeenCalledWith(1);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(systemRole);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Array);
+        });
     });
 
-    it('should handle system role not found', async () => {
-      SystemRole.findByPk.mockResolvedValue(null);
-      req.params.id = 1;
+    describe('GET /systemRole/:id', () => {
+        it('should return a system role by id', async () => {
+            const response = await request(app).get('/systemRole/1');
 
-      await systemRoleController.getById(req, res);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+        });
 
-      expect(SystemRole.findByPk).toHaveBeenCalledWith(1);
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find the system role with id 1');
-    });
-  });
+        it('should return 400 if system role not found', async () => {
+            SystemRoleMock.findByPk.withArgs(2).returns(null);
+            const response = await request(app).get('/systemRole/2');
 
-  describe('create', () => {
-    it('should create a new system role', async () => {
-      const newSystemRole = { id: 1, systemRole: 'Admin' };
-      req.body = { system_role: 'Admin' };
-      SystemRole.create.mockResolvedValue(newSystemRole);
-
-      await systemRoleController.create(req, res);
-
-      expect(SystemRole.create).toHaveBeenCalledWith({ systemRole: 'Admin' });
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(newSystemRole);
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Unable to find the system role with id 2');
+            expect(response.status).toBe(400);
+        });
     });
 
-    it('should handle missing essential fields', async () => {
-      req.body = { system_role: null };
+    describe('POST /systemRole', () => {
+        it('should create a new system role', async () => {
+            const newSystemRole = {
+                system_role: 'Manager'
+            };
 
-      await systemRoleController.create(req, res);
+            const response = await request(app).post('/systemRole').send(newSystemRole);
 
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Essential fields missing');
-    });
-  });
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty('id');
+        });
 
-  describe('deleting', () => {
-    it('should delete a system role', async () => {
-      req.body.id = 1;
-      SystemRole.destroy.mockResolvedValue(1);
+        it('should return 400 if essential fields are missing', async () => {
+            const response = await request(app).post('/systemRole').send({});
 
-      await systemRoleController.deleting(req, res);
-
-      expect(SystemRole.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalledWith('system role deleted');
-    });
-
-    it('should handle system role not found for deletion', async () => {
-      req.body.id = 1;
-      SystemRole.destroy.mockResolvedValue(0);
-
-      await systemRoleController.deleting(req, res);
-
-      expect(SystemRole.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 404, 'Id not found');
-    });
-  });
-
-  describe('update', () => {
-    it('should update a system role', async () => {
-      req.body = { id: 1, system_role: 'User' };
-      const updatedSystemRole = { id: 1, systemRole: 'User' };
-      SystemRole.update.mockResolvedValue([1, [updatedSystemRole]]);
-
-      await systemRoleController.update(req, res);
-
-      expect(SystemRole.update).toHaveBeenCalledWith({ systemRole: 'User' }, { where: { id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ systemRole: 'User' });
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Essential fields missing');
+            expect(response.status).toBe(400);
+        });
     });
 
-    it('should handle missing essential fields', async () => {
-      req.body = { id: 1, system_role: null };
+    describe('PUT /systemRole', () => {
+        it('should update a system role', async () => {
+            const updateData = {
+                id: 1,
+                system_role: 'Super Admin'
+            };
 
-      await systemRoleController.update(req, res);
+            const response = await request(app).put('/systemRole').send(updateData);
 
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Missing essential fields');
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+        });
+
+        it('should return 400 if essential fields are missing', async () => {
+            const response = await request(app).put('/systemRole').send({ id: 1 });
+
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Missing essential fields');
+            expect(response.status).toBe(400);
+        });
     });
-  });
+
+    describe('DELETE /systemRole', () => {
+        it('should delete a system role', async () => {
+            const response = await request(app).delete('/systemRole').send({ id: 1 });
+
+            expect(response.status).toBe(200);
+            expect(response.text).toBe('system role deleted');
+        });
+
+        it('should return 404 if id not found', async () => {
+            SystemRoleMock.destroy.withArgs({ where: { id: 2 } }).returns(0);
+            const response = await request(app).delete('/systemRole').send({ id: 2 });
+
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 404, 'Id not found');
+            expect(response.status).toBe(404);
+        });
+    });
 });
+

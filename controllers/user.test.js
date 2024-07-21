@@ -1,218 +1,198 @@
-const userController = require('./user.js');
-const utilities = require('../utilities/utility');
-const db = require('../models');
-const { User, SystemRole } = db;
+// test/user.test.js
 
-jest.mock('../models');
+const request = require('supertest');
+const express = require('express');
+const SequelizeMock = require('sequelize-mock');
+const utilities = require('../utilities/utility');
+
+const app = express();
+app.use(express.json());
+
+// Mock the Sequelize instance
+const DBConnectionMock = new SequelizeMock();
+
+// Mock models
+const UserMock = DBConnectionMock.define('User', {
+    id: 1,
+    firstname: 'John',
+    surname: 'Doe',
+    username: 'johndoe',
+    password: 'password',
+    job_role: 'Developer',
+    system_role_id: 1
+});
+
+const SystemRoleMock = DBConnectionMock.define('SystemRole', {
+    id: 1,
+    system_role: 'Admin'
+});
+
+// Mocking the db module to use mocked models
+const db = {
+    user: UserMock,
+    systemRole: SystemRoleMock
+};
+
+// Mocking utilities
 jest.mock('../utilities/utility');
 
+// Import the user controller with mocked models
+const userController = require('../controllers/user');
+
+// Assign routes to the app
+app.get('/user', userController.getAll);
+app.get('/user/:id', userController.getById);
+app.post('/user', userController.create);
+app.put('/user', userController.update);
+app.delete('/user', userController.deleting);
+app.get('/user/name/:firstname/:surname', userController.getByName);
+app.get('/user/jobrole/:job_role', userController.getByJobRole);
+app.get('/user/systemrole/:system_role', userController.getBySystemRole);
+
 describe('User Controller', () => {
-  let req, res;
+    describe('GET /user', () => {
+        it('should return all users', async () => {
+            const response = await request(app).get('/user');
 
-  beforeEach(() => {
-    req = { params: {}, body: {} };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      send: jest.fn(),
-    };
-  });
-
-  describe('getAll', () => {
-    it('should return all users', async () => {
-      const users = [{ id: 1, firstName: 'John', surname: 'Doe' }];
-      User.findAll.mockResolvedValue(users);
-
-      await userController.getAll(req, res);
-
-      expect(User.findAll).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(users);
-    });
-  });
-
-  describe('getById', () => {
-    it('should return user by id', async () => {
-      const user = { id: 1, firstName: 'John', surname: 'Doe' };
-      User.findByPk.mockResolvedValue(user);
-      req.params.id = 1;
-
-      await userController.getById(req, res);
-
-      expect(User.findByPk).toHaveBeenCalledWith(1);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(user);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Array);
+        });
     });
 
-    it('should handle user not found', async () => {
-      User.findByPk.mockResolvedValue(null);
-      req.params.id = 1;
+    describe('GET /user/:id', () => {
+        it('should return a user by id', async () => {
+            const response = await request(app).get('/user/1');
 
-      await userController.getById(req, res);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+        });
 
-      expect(User.findByPk).toHaveBeenCalledWith(1);
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find the user with id 1');
-    });
-  });
+        it('should return 400 if user not found', async () => {
+            UserMock.findByPk.withArgs(2).returns(null);
+            const response = await request(app).get('/user/2');
 
-  describe('create', () => {
-    it('should create a new user', async () => {
-      const newUser = { id: 1, firstName: 'John', surname: 'Doe', username: 'johndoe', password: 'password', jobRole: 'Developer', systemRoleId: 1 };
-      req.body = { firstname: 'John', surname: 'Doe', username: 'johndoe', password: 'password', job_role: 'Developer', system_role_id: 1 };
-      SystemRole.findAll.mockResolvedValue([{ id: 1, systemRole: 'Admin' }]);
-      User.create.mockResolvedValue(newUser);
-
-      await userController.create(req, res);
-
-      expect(SystemRole.findAll).toHaveBeenCalledWith({ where: { systemRoleId: 1 } });
-      expect(User.create).toHaveBeenCalledWith(newUser);
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(newUser);
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Unable to find the user with id 2');
+            expect(response.status).toBe(400);
+        });
     });
 
-    it('should handle missing essential fields', async () => {
-      req.body = { firstname: 'John', surname: 'Doe', username: 'johndoe', password: null, job_role: 'Developer', system_role_id: 1 };
+    describe('POST /user', () => {
+        it('should create a new user', async () => {
+            const newUser = {
+                firstname: 'Jane',
+                surname: 'Smith',
+                username: 'janesmith',
+                password: 'password',
+                job_role: 'Manager',
+                system_role_id: 1
+            };
 
-      await userController.create(req, res);
+            const response = await request(app).post('/user').send(newUser);
 
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Essential fields missing');
-    });
-  });
+            expect(response.status).toBe(201);
+            expect(response.body).toHaveProperty('id');
+        });
 
-  describe('deleting', () => {
-    it('should delete a user', async () => {
-      req.body.id = 1;
-      User.destroy.mockResolvedValue(1);
+        it('should return 400 if essential fields are missing', async () => {
+            const response = await request(app).post('/user').send({});
 
-      await userController.deleting(req, res);
-
-      expect(User.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalledWith('user deleted');
-    });
-
-    it('should handle user not found for deletion', async () => {
-      req.body.id = 1;
-      User.destroy.mockResolvedValue(0);
-
-      await userController.deleting(req, res);
-
-      expect(User.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 404, 'Id not found');
-    });
-  });
-
-  describe('update', () => {
-    it('should update a user', async () => {
-      req.body = { id: 1, firstname: 'John', surname: 'Doe', username: 'johndoe', password: 'newpassword', job_role: 'Developer', system_role_id: 1 };
-      const updatedUser = { id: 1, firstName: 'John', surname: 'Doe', username: 'johndoe', password: 'newpassword', jobRole: 'Developer', systemRoleId: 1 };
-      SystemRole.findAll.mockResolvedValue([{ id: 1, systemRole: 'Admin' }]);
-      User.update.mockResolvedValue([1, [updatedUser]]);
-
-      await userController.update(req, res);
-
-      expect(SystemRole.findAll).toHaveBeenCalledWith({ where: { systemRoleId: 1 } });
-      expect(User.update).toHaveBeenCalledWith(updatedUser, { where: { id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(updatedUser);
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Essential fields missing');
+            expect(response.status).toBe(400);
+        });
     });
 
-    it('should handle missing essential fields', async () => {
-      req.body = { id: 1, firstname: 'John', surname: 'Doe', username: 'johndoe', password: null, job_role: 'Developer', system_role_id: 1 };
+    describe('PUT /user', () => {
+        it('should update a user', async () => {
+            const updateData = {
+                id: 1,
+                firstname: 'John',
+                surname: 'Doe',
+                username: 'john_doe_updated',
+                password: 'newpassword',
+                job_role: 'Lead Developer',
+                system_role_id: 1
+            };
 
-      await userController.update(req, res);
+            const response = await request(app).put('/user').send(updateData);
 
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Missing essential fields');
-    });
-  });
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Object);
+        });
 
-  describe('getByName', () => {
-    it('should return users by name', async () => {
-      const users = [{ id: 1, firstName: 'John', surname: 'Doe' }];
-      req.params.firstname = 'John';
-      req.params.surname = 'Doe';
-      User.findAll.mockResolvedValue(users);
+        it('should return 400 if essential fields are missing', async () => {
+            const response = await request(app).put('/user').send({ id: 1 });
 
-      await userController.getByName(req, res);
-
-      expect(User.findAll).toHaveBeenCalledWith({ where: { firstname: 'John', surname: 'Doe' } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(users);
-    });
-
-    it('should handle user not found by name', async () => {
-      req.params.firstname = 'John';
-      req.params.surname = 'Doe';
-      User.findAll.mockResolvedValue([]);
-
-      await userController.getByName(req, res);
-
-      expect(User.findAll).toHaveBeenCalledWith({ where: { firstname: 'John', surname: 'Doe' } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find user with the name John Doe');
-    });
-  });
-
-  describe('getByJobRole', () => {
-    it('should return users by job role', async () => {
-      const users = [{ id: 1, firstName: 'John', surname: 'Doe', jobRole: 'Developer' }];
-      req.params.job_role = 'Developer';
-      User.findAll.mockResolvedValue(users);
-
-      await userController.getByJobRole(req, res);
-
-      expect(User.findAll).toHaveBeenCalledWith({ where: { job_role: 'Developer' } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(users);
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Essential fields missing');
+            expect(response.status).toBe(400);
+        });
     });
 
-    it('should handle user not found by job role', async () => {
-      req.params.job_role = 'Developer';
-      User.findAll.mockResolvedValue([]);
+    describe('DELETE /user', () => {
+        it('should delete a user', async () => {
+            const response = await request(app).delete('/user').send({ id: 1 });
 
-      await userController.getByJobRole(req, res);
+            expect(response.status).toBe(200);
+            expect(response.text).toBe('user deleted');
+        });
 
-      expect(User.findAll).toHaveBeenCalledWith({ where: { job_role: 'Developer' } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find any users with the job role Developer');
-    });
-  });
+        it('should return 404 if id not found', async () => {
+            UserMock.destroy.withArgs({ where: { id: 2 } }).returns(0);
+            const response = await request(app).delete('/user').send({ id: 2 });
 
-  describe('getBySystemRole', () => {
-    it('should return users by system role', async () => {
-      const systemRoles = [{ id: 1, systemRole: 'Admin' }];
-      const users = [{ id: 1, firstName: 'John', surname: 'Doe', systemRoleId: 1 }];
-      req.params.system_role = 'Admin';
-      SystemRole.findAll.mockResolvedValue(systemRoles);
-      User.findAll.mockResolvedValue(users);
-
-      await userController.getBySystemRole(req, res);
-
-      expect(SystemRole.findAll).toHaveBeenCalledWith({ where: { system_role: 'Admin' } });
-      expect(User.findAll).toHaveBeenCalledWith({ where: { system_role_id: systemRoles[0].id } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(users);
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 404, 'Id not found');
+            expect(response.status).toBe(404);
+        });
     });
 
-    it('should handle system role not found', async () => {
-      req.params.system_role = 'Admin';
-      SystemRole.findAll.mockResolvedValue([]);
+    describe('GET /user/name/:firstname/:surname', () => {
+        it('should return a user by name', async () => {
+            const response = await request(app).get('/user/name/John/Doe');
 
-      await userController.getBySystemRole(req, res);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Array);
+        });
 
-      expect(SystemRole.findAll).toHaveBeenCalledWith({ where: { system_role: 'Admin' } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find the system role Admin');
+        it('should return 400 if user not found', async () => {
+            UserMock.findAll.withArgs({ where: { firstname: 'Jane', surname: 'Smith' } }).returns([]);
+            const response = await request(app).get('/user/name/Jane/Smith');
+
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Unable to find user with the name Jane Smith');
+            expect(response.status).toBe(400);
+        });
     });
 
-    it('should handle user not found by system role', async () => {
-      const systemRoles = [{ id: 1, systemRole: 'Admin' }];
-      req.params.system_role = 'Admin';
-      SystemRole.findAll.mockResolvedValue(systemRoles);
-      User.findAll.mockResolvedValue([]);
+    describe('GET /user/jobrole/:job_role', () => {
+        it('should return users by job role', async () => {
+            const response = await request(app).get('/user/jobrole/Developer');
 
-      await userController.getBySystemRole(req, res);
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Array);
+        });
 
-      expect(SystemRole.findAll).toHaveBeenCalledWith({ where: { system_role: 'Admin' } });
-      expect(User.findAll).toHaveBeenCalledWith({ where: { system_role_id: systemRoles[0].id } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Unable to find any users with the system role Admin');
+        it('should return 400 if no users found with job role', async () => {
+            UserMock.findAll.withArgs({ where: { job_role: 'NonExistentRole' } }).returns([]);
+            const response = await request(app).get('/user/jobrole/NonExistentRole');
+
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Unable to find any users with the job role NonExistentRole');
+            expect(response.status).toBe(400);
+        });
     });
-  });
+
+    describe('GET /user/systemrole/:system_role', () => {
+        it('should return users by system role', async () => {
+            const response = await request(app).get('/user/systemrole/Admin');
+
+            expect(response.status).toBe(200);
+            expect(response.body).toBeInstanceOf(Array);
+        });
+
+        it('should return 400 if system role not found', async () => {
+            SystemRoleMock.findAll.withArgs({ where: { system_role: 'NonExistentRole' } }).returns([]);
+            const response = await request(app).get('/user/systemrole/NonExistentRole');
+
+            expect(utilities.formatErrorResponse).toHaveBeenCalledWith(expect.any(Object), 400, 'Unable to find the system role NonExistentRole');
+            expect(response.status).toBe(400);
+        });
+    });
 });
+

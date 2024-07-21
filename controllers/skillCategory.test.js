@@ -1,127 +1,105 @@
-const skillCategoryController = require('./skillCategory.js');
-const utilities = require('../utilities/utility');
-const db = require('../models');
-const { SkillCategory } = db;
+// tests/skillCategory.test.js
 
-jest.mock('../models');
-jest.mock('../utilities/utility');
+const SequelizeMock = require('sequelize-mock');
+const express = require('express');
+const request = require('supertest');
+const utilities = require('../utilities/utility');  // Adjust the path as necessary
+const skillCategoryController = require('../controllers/skillCategory');
 
-describe('Skill Category Controller', () => {
-  let req, res;
+// Initialize Sequelize Mock
+const DBConnectionMock = new SequelizeMock();
 
-  beforeEach(() => {
-    req = { params: {}, body: {} };
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-      send: jest.fn(),
-    };
-  });
+// Mock the SkillCategory model
+const SkillCategoryMock = DBConnectionMock.define('SkillCategory', {
+    id: 1,
+    description: 'Mock Skill Category'
+});
 
-  describe('getAll', () => {
-    it('should return all skill categories', async () => {
-      const skillCategories = [{ id: 1, description: 'Category 1' }];
-      SkillCategory.findAll.mockResolvedValue(skillCategories);
+// Mock the utilities
+jest.mock('../utilities/utility', () => ({
+    formatErrorResponse: jest.fn((res, status, message) => res.status(status).json({ error: message })),
+}));
 
-      await skillCategoryController.getAll(req, res);
+// Mock the db object
+jest.mock('../models', () => ({
+    SkillCategory: SkillCategoryMock
+}));
 
-      expect(SkillCategory.findAll).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(skillCategories);
-    });
-  });
+// Set up express app for testing
+const app = express();
+app.use(express.json()); // To parse JSON bodies
+app.use('/skillCategories', require('../routes/skillCategory'));  // Adjust the path as necessary
 
-  describe('getById', () => {
-    it('should return skill category by id', async () => {
-      const skillCategory = { id: 1, description: 'Category 1' };
-      SkillCategory.findByPk.mockResolvedValue(skillCategory);
-      req.params.id = 1;
-
-      await skillCategoryController.getById(req, res);
-
-      expect(SkillCategory.findByPk).toHaveBeenCalledWith(1);
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(skillCategory);
+describe('SkillCategory Controller', () => {
+    it('should get all skill categories', async () => {
+        const response = await request(app).get('/skillCategories/');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual([{
+            id: 1,
+            description: 'Mock Skill Category'
+        }]);
     });
 
-    it('should handle skill category not found', async () => {
-      SkillCategory.findByPk.mockResolvedValue(null);
-      req.params.id = 1;
-
-      await skillCategoryController.getById(req, res);
-
-      expect(SkillCategory.findByPk).toHaveBeenCalledWith(1);
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, expect.any(String));
+    it('should get a skill category by ID', async () => {
+        const response = await request(app).get('/skillCategories/id/1');
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual({
+            id: 1,
+            description: 'Mock Skill Category'
+        });
     });
-  });
 
-  describe('create', () => {
+    it('should return error for non-existent skill category by ID', async () => {
+        SkillCategoryMock.findByPk.mockReturnValueOnce(null);
+        const response = await request(app).get('/skillCategories/id/99');
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            error: 'Unable to find the skill category with id 99'
+        });
+    });
+
     it('should create a new skill category', async () => {
-      const newSkillCategory = { id: 1, description: 'Category 1' };
-      req.body = { description: 'Category 1' };
-      SkillCategory.create.mockResolvedValue(newSkillCategory);
-
-      await skillCategoryController.create(req, res);
-
-      expect(SkillCategory.create).toHaveBeenCalledWith({ description: 'Category 1' });
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(newSkillCategory);
+        const newSkillCategory = { description: 'New Skill Category' };
+        const response = await request(app).post('/skillCategories/').send(newSkillCategory);
+        expect(response.status).toBe(201);
+        expect(response.body).toEqual(newSkillCategory);
     });
 
-    it('should handle missing essential fields', async () => {
-      req.body = { description: '' };
-
-      await skillCategoryController.create(req, res);
-
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Essential fields missing');
+    it('should return error when creating a skill category with missing fields', async () => {
+        const response = await request(app).post('/skillCategories/').send({});
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            error: 'Essential fields missing'
+        });
     });
-  });
 
-  describe('delete', () => {
     it('should delete a skill category', async () => {
-      req.body.id = 1;
-      SkillCategory.destroy.mockResolvedValue(1);
-
-      await skillCategoryController.deleting(req, res);
-
-      expect(SkillCategory.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.send).toHaveBeenCalledWith('skill category deleted');
+        const response = await request(app).delete('/skillCategories/').send({ id: 1 });
+        expect(response.status).toBe(200);
+        expect(response.text).toBe('skill category deleted');
     });
 
-    it('should handle skill category not found for deletion', async () => {
-      req.body.id = 1;
-      SkillCategory.destroy.mockResolvedValue(0);
-
-      await skillCategoryController.deleting(req, res);
-
-      expect(SkillCategory.destroy).toHaveBeenCalledWith({ where: { id: 1 } });
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 404, 'Id not found');
-    });
-  });
-
-  describe('update', () => {
-    it('should update an existing skill category', async () => {
-      const updatedSkillCategory = { id: 1, description: 'Updated Category' };
-      req.body = { id: 1, description: 'Updated Category' };
-      SkillCategory.update.mockResolvedValue([1, [updatedSkillCategory]]);
-
-      await skillCategoryController.update(req, res);
-
-      expect(SkillCategory.update).toHaveBeenCalledWith(
-        { description: 'Updated Category' },
-        { where: { id: req.body.id } }
-      );
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({ description: 'Updated Category' });
+    it('should return error when deleting a non-existent skill category', async () => {
+        SkillCategoryMock.destroy.mockReturnValueOnce(0);
+        const response = await request(app).delete('/skillCategories/').send({ id: 99 });
+        expect(response.status).toBe(404);
+        expect(response.body).toEqual({
+            error: 'Id not found'
+        });
     });
 
-    it('should handle missing essential fields for update', async () => {
-      req.body = { id: 1, description: '' };
-
-      await skillCategoryController.update(req, res);
-
-      expect(utilities.formatErrorResponse).toHaveBeenCalledWith(res, 400, 'Missing essential fields');
+    it('should update a skill category', async () => {
+        const updatedSkillCategory = { id: 1, description: 'Updated Skill Category' };
+        const response = await request(app).put('/skillCategories/').send(updatedSkillCategory);
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual(updatedSkillCategory);
     });
-  });
+
+    it('should return error when updating a skill category with missing fields', async () => {
+        const response = await request(app).put('/skillCategories/').send({ id: 1 });
+        expect(response.status).toBe(400);
+        expect(response.body).toEqual({
+            error: 'Missing essential fields'
+        });
+    });
 });
