@@ -5,6 +5,7 @@ const express = require('express');
 const request = require('supertest');
 const utilities = require('../utilities/utility');  // Adjust the path as necessary
 const staffAssignmentController = require('../controllers/staffAssignment');
+const app = require('../app');
 
 // Initialize Sequelize Mock
 const DBConnectionMock = new SequelizeMock();
