@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const logger = require('morgan');
+const helmet = require('helmet');
 
 const port = process.env.PORT || '8900';
 const skillAssignmentRouter = require('./routes/skillAssignment');
@@ -13,27 +14,39 @@ const staffAssignmentRouter = require('./routes/staffAssignment');
 
 const utilities = require('./utilities/utility');
 
+app.use(helmet());
+app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }));
+app.use(helmet.frameguard({ action: 'deny' }));
+app.use(helmet.xssFilter());
+app.use(helmet.noSniff());
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", 'https:', "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+        connectSrc: ["'self'", 'https:'],
+        fontSrc: ["'self'", 'https:', 'data:'],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+    },
+})); 
+
 app.use(express.json());
 app.use(logger('dev'));
 app.set('port', port);
 app.listen(port);
 
-app.use("/api/skillAssignment",skillAssignmentRouter);
-app.use("/api/skillCategory",skillCategoryRouter);
-app.use("/api/skillLevel",skillLevelRouter);
-app.use("/api/systemRole",systemRoleRouter);
-app.use("/api/user",userRouter);
-app.use("/api/skill",skillRouter);
-app.use("/api/staffAssignment",staffAssignmentRouter);
-
-
-
+app.use("/api/skillAssignment", skillAssignmentRouter);
+app.use("/api/skillCategory", skillCategoryRouter);
+app.use("/api/skillLevel", skillLevelRouter);
+app.use("/api/systemRole", systemRoleRouter);
+app.use("/api/user", userRouter);
+app.use("/api/skill", skillRouter);
+app.use("/api/staffAssignment", staffAssignmentRouter);
 
 app.use((req, res) =>
-    utilities.formatErrorResponse(res,400,
-        "End point not recognised"));
-
-
-
+    utilities.formatErrorResponse(res, 400, "End point not recognised")
+);
 
 module.exports = app;
