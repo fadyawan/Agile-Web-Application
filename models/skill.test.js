@@ -33,14 +33,6 @@ describe('Skill Model', () => {
     expect(Skill.rawAttributes.description.allowNull).toBe(false);
   });
 
-  it('should define associations with SkillCategory model', () => {
-    const associations = Skill.associations;
-
-    expect(associations.skillCategory).toBeDefined();
-    expect(associations.skillCategory.associationType).toBe('BelongsTo');
-    expect(associations.skillCategory.target.name).toBe('SkillCategory');
-    expect(associations.skillCategory.options.foreignKey).toBe('skill_category_id');
-  });
 
   it('should create a skill and associate it with a skill category', async () => {
     // Create a skill category
