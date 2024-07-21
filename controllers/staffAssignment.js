@@ -2,8 +2,8 @@ const router = require('../routes/staffAssignment');
 const utilities = require('../utilities/utility');
 
 const db = require('../models');
-const StaffAssignment = db.StaffAssignment;
-const User = db.User
+const StaffAssignment = db.staffAssignment;
+const User = db.user
 
 getAll  = async (req, res) =>{
     const staffAssignment = await StaffAssignment.findAll();
@@ -86,9 +86,8 @@ create  = async (req, res) =>{
         managerId: req.body.manager_id
     };
 
-
     try{
-        const user = await User.findAll({where: {id: staffId}});
+        const user = await User.findAll({where: {id: staffAssignment.staffId}});
         if(user.length==0){
             throw new Error("Unable to find the staff member with id" + id);
         }
@@ -98,7 +97,7 @@ create  = async (req, res) =>{
     }
 
     try{
-        const user = await User.findAll({where: {id: managerId}});
+        const user = await User.findAll({where: {id: staffAssignment.managerId}});
         if(user.length==0){
             throw new Error("Unable to find the manager with id" + id);
         }
@@ -113,7 +112,7 @@ create  = async (req, res) =>{
             staffAssignment.managerId==null){
             throw new Error("Essential fields missing");
             }
-            staffAssignment = await StaffAssignment.create(staffAssignment);
+            createAssignment = await StaffAssignment.create(staffAssignment);
             res.status(201).json(staffAssignment);
             }
             catch (error){
@@ -126,6 +125,17 @@ create  = async (req, res) =>{
 deleting  = async (req, res) =>{
 
     const id = req.body.id;
+
+    try{
+        const doesAssignmentExist = await StaffAssignment.findAll({where: {id: id}});
+        if(doesAssignmentExist.length==0 || doesAssignmentExist==null){
+            throw new Error("Unable to find the staff assignment with id " + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+
     try{
         const deleted = await StaffAssignment.destroy({where: { id: id }});
         

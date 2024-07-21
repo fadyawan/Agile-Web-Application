@@ -1,7 +1,7 @@
 const router = require('../routes/skillCategory');
 const utilities = require('../utilities/utility');
 const db = require('../models');
-const SkillCategory = db.SkillCategory;
+const SkillCategory = db.skillCategory;
 
 getAll  = async (req, res) =>{
     const skillCategory = await SkillCategory.findAll();
@@ -48,6 +48,18 @@ create  = async (req, res) =>{
 deleting  = async (req, res) =>{
 
     const id = req.body.id;
+
+    try{
+        const doesCategoryExist = await SkillCategory.findAll({where: {id: id}});
+        if(doesCategoryExist.length==0 || doesCategoryExist==null){
+            throw new Error("Unable to find the  skill category with id" + id);
+        }
+    }
+    catch(error){
+            return utilities.formatErrorResponse(res,400,error.message);
+        }
+
+
     try{
         const deleted = await SkillCategory.destroy({where: { id: id }});
         
@@ -58,7 +70,7 @@ deleting  = async (req, res) =>{
         res.status(200).send("skill category deleted");
     }
     catch(error){
-        utilities.formatErrorResponse(res,404,error.message);
+        return utilities.formatErrorResponse(res,404,error.message);
     }
     
 }
@@ -69,6 +81,16 @@ update  = async (req, res) =>{
     const skillCategory = {
         description: req.body.description
     };
+
+    try{
+        const doesCategoryExist = await SkillCategory.findAll({where: {id: id}});
+        if(doesCategoryExist.length==0 || doesCategoryExist==null){
+            throw new Error("Unable to find the  skill category with id" + id);
+        }
+    }
+    catch(error){
+            return utilities.formatErrorResponse(res,400,error.message);
+        }
 
     try{
         if (skillCategory.description == null ||
@@ -82,7 +104,7 @@ update  = async (req, res) =>{
         res.status(200).json(skillCategory);
     }
     catch (error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }  
 }
 

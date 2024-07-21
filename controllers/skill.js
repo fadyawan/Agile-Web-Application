@@ -2,8 +2,8 @@ const router = require('../routes/skill');
 const utilities = require('../utilities/utility');
 
 const db = require('../models');
-const Skill = db.Skill;
-const SkillCategory = db.SkillCategory;
+const Skill = db.skill;
+const SkillCategory = db.skillCategory;
 
 
 getAll = async (req, res) =>{
@@ -44,19 +44,8 @@ getSkillByDescription = async (req, res) =>{
 }
 
 getSkillByCategory = async (req, res) =>{
-    const category = req.params.category;
+    const categoryId = req.params.category_id;
 
-    try {
-        const skillCategory = await Skill.findAll({where: {description: category}});
-
-        if(skillCategory==null || skillCategory.length==0){
-            throw new Error("Unable to find the skill category " + category);
-        }
-        const categoryId = skillCategory.id;
-        }
-        catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
-        }
 
     try {
         const skill = await Skill.findAll({where: {skill_category_id: categoryId}});
@@ -79,7 +68,7 @@ create = async (req, res) =>{
 
 
         try{
-            const category = await SkillCategory.findAll({where: {id: skillCategoryId}});
+            const category = await SkillCategory.findAll({where: {id: skill.skillCategoryId}});
             if(category.length==0){
                 throw new Error("Unable to find the skill category with id" + category);
             }
@@ -114,6 +103,15 @@ update = async (req, res) =>{
         skillCategoryId: req.body.skill_category_id
         };
 
+        try{
+            const doesSkillExist = await Skill.findAll({where: {id: id}});
+            if(doesSkillExist.length==0 || doesSkillExist==null){
+                throw new Error("Unable to find the  skill with id" + id);
+            }
+        }
+        catch(error){
+                utilities.formatErrorResponse(res,400,error.message);
+            }
 
     try{
         const category = await SkillCategory.findAll({where: {id: skillCategoryId}});
@@ -146,6 +144,17 @@ update = async (req, res) =>{
 
 deleting = async (req, res) =>{
     const id = req.body.id;
+
+    try{
+        const doesSkillExist = await Skill.findAll({where: {id: id}});
+        if(doesSkillExist.length==0 || doesSkillExist==null){
+            throw new Error("Unable to find the  skill with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+
     try{
         const deleted = await SkillCategory.destroy({where: { id: id }});
         

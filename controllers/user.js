@@ -2,8 +2,8 @@ const router = require('../routes/user');
 const utilities = require('../utilities/utility');
 
 const db = require('../models');
-const User = db.User;
-const SystemRole = db.SystemRole
+const User = db.user;
+const SystemRole = db.systemRole
 
 getAll  = async (req, res) =>{
     const user = await User.findAll();
@@ -37,13 +37,13 @@ create  = async (req, res) =>{
         };
 
         try{
-            const systemRole = await SystemRole.findAll({where: {systemRoleId: id}});
+            const systemRole = await SystemRole.findAll({where: {id: user.systemRoleId}});
             if(systemRole.length==0){
                 throw new Error("Unable to find the system role with id" + id);
             }
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 
         try{
@@ -63,7 +63,7 @@ create  = async (req, res) =>{
             res.status(201).json(user);
             }
             catch (error){
-            utilities.formatErrorResponse(res,
+            return utilities.formatErrorResponse(res,
             400,
             error.message);
             }
@@ -72,6 +72,18 @@ create  = async (req, res) =>{
 deleting  = async (req, res) =>{
 
     const id = req.body.id;
+
+    try{
+        const doesUserExist = await User.findAll({where: {id: id}});
+        if(doesUserExist.length==0 || doesUserExist==null){
+            throw new Error("Unable to find the user with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+
+
     try{
         const deleted = await User.destroy({where: { id: id }});
         
@@ -99,6 +111,16 @@ update  = async (req, res) =>{
         systemRoleId: req.body.system_role_id
     };
 
+    try{
+        const doesUserExist = await User.findAll({where: {id: id}});
+        if(doesUserExist.length==0 || doesUserExist==null){
+            throw new Error("Unable to find the user with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+    
     try{
         const systemRole = await SystemRole.findAll({where: {systemRoleId: id}});
         if(systemRole.length==0){

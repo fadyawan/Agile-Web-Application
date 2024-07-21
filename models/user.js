@@ -28,5 +28,6 @@ module.exports = (sequelize, Sequelize, SystemRole) => {
         {foreignKey: 'system_role_id'});
 
 
+
     return User;
 };

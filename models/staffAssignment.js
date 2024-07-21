@@ -1,5 +1,6 @@
 module.exports = (sequelize, Sequelize, User) => {
     const StaffAssignment = sequelize.define("staff_assignment",
+    {},
     {
       timestamps: false,
       freezeTableName: true,
@@ -8,11 +9,9 @@ module.exports = (sequelize, Sequelize, User) => {
     );
 
     StaffAssignment.belongsTo(User,
-        {foreignKey: 'staff_id'});
-
-    StaffAssignment.belongsTo(User,
-        {foreignKey: 'manager_id'});
-
+        {foreignKey: 'staff_id', 
+         foreignKey: 'manager_id'
+        });
 
     return StaffAssignment;
 };
