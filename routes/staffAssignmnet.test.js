@@ -1,7 +1,7 @@
 
 const request = require('supertest');
 const express = require('express');
-const staffAssignmentRouter = require('./staffAssignmnet.js'); // Update the path as necessary
+const staffAssignmentRouter = require('./staffAssignment.js'); // Update the path as necessary
 const staffAssignmentController = require('../controllers/staffAssignment'); // Update the path as necessary
 
 const app = express();
