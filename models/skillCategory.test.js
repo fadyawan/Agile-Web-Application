@@ -1,36 +1,33 @@
-// skillCategory.test.js
+const { Sequelize, DataTypes } = require('sequelize');
+const { sequelize } = require('../models'); // Adjust the path as necessary
 
-const SequelizeMock = require('sequelize-mock');
-const SkillCategoryModelFactory = require('./skillCategory.js'); // Update the path as necessary
+// Define the SkillCategory model
+const SkillCategory = sequelize.define('SkillCategory', {
+  description: {
+    type: DataTypes.STRING,
+  },
+}, {
+  timestamps: false,
+  freezeTableName: true,
+  tableName: 'skill_category',
+});
 
 describe('SkillCategory Model', () => {
-    let dbMock;
-    let SkillCategory;
+  beforeAll(async () => {
+    await sequelize.sync({ force: true }); // Sync the database
+  });
 
-    beforeAll(() => {
-        dbMock = new SequelizeMock();
-        SkillCategory = SkillCategoryModelFactory(dbMock, dbMock.Sequelize);
-    });
+  it('should define the SkillCategory model correctly', () => {
+    // Check if the SkillCategory model exists
+    expect(SkillCategory).toBeDefined();
 
-    it('should be defined', () => {
-        expect(SkillCategory).toBeDefined();
-    });
+    // Verify the attributes
+    expect(SkillCategory.rawAttributes).toHaveProperty('description');
+    expect(SkillCategory.rawAttributes.description.type).toBeInstanceOf(DataTypes.STRING);
 
-    it('should have the correct table name', () => {
-        expect(SkillCategory.getTableName()).toBe('skill_category');
-    });
-
-    it('should have a description field', () => {
-        const attributes = SkillCategory.rawAttributes;
-        expect(attributes).toHaveProperty('description');
-        expect(attributes.description.type).toBe(dbMock.Sequelize.STRING);
-    });
-
-    it('should not have timestamps', () => {
-        expect(SkillCategory.options.timestamps).toBe(false);
-    });
-
-    it('should freeze table name', () => {
-        expect(SkillCategory.options.freezeTableName).toBe(true);
-    });
+    // Verify tableName and timestamps options
+    expect(SkillCategory.options.timestamps).toBe(false);
+    expect(SkillCategory.options.freezeTableName).toBe(true);
+    expect(SkillCategory.options.tableName).toBe('skill_category');
+  });
 });

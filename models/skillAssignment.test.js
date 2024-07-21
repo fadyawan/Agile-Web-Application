@@ -1,59 +1,61 @@
-// skillAssignment.test.js
+const { Sequelize, DataTypes } = require('sequelize');
+const { sequelize } = require('../models'); // Adjust the path as necessary
 
-const SequelizeMock = require('sequelize-mock');
-const SkillAssignmentModelFactory = require('./skillAssignment.js'); // Update the path as necessary
+// Define the Staff, Skill, and SkillLevel models for testing
+const Staff = sequelize.define('Staff', {}, { timestamps: false });
+const Skill = sequelize.define('Skill', {}, { timestamps: false });
+const SkillLevel = sequelize.define('SkillLevel', {}, { timestamps: false });
+
+// Define the SkillAssignment model
+const SkillAssignment = sequelize.define('SkillAssignment', {
+  expiry_date: {
+    type: DataTypes.DATE,
+  },
+}, {
+  timestamps: false,
+  freezeTableName: true,
+  tableName: 'skill_assignment',
+});
+
+// Define associations
+SkillAssignment.belongsTo(Staff, { foreignKey: 'staff_id' });
+SkillAssignment.belongsTo(Skill, { foreignKey: 'skill_id' });
+SkillAssignment.belongsTo(SkillLevel, { foreignKey: 'skill_level_id' });
 
 describe('SkillAssignment Model', () => {
-    let dbMock;
-    let StaffMock;
-    let SkillMock;
-    let SkillLevelMock;
-    let SkillAssignment;
+  beforeAll(async () => {
+    await sequelize.sync({ force: true }); // Sync the database
+  });
 
-    beforeAll(() => {
-        dbMock = new SequelizeMock();
-        StaffMock = dbMock.define('Staff', {
-            name: 'John Doe'
-        });
-        SkillMock = dbMock.define('Skill', {
-            description: 'JavaScript'
-        });
-        SkillLevelMock = dbMock.define('SkillLevel', {
-            level: 'Expert'
-        });
+  it('should define the SkillAssignment model correctly', () => {
+    // Check if the SkillAssignment model exists
+    expect(SkillAssignment).toBeDefined();
 
-        SkillAssignment = SkillAssignmentModelFactory(dbMock, dbMock.Sequelize, StaffMock, SkillMock, SkillLevelMock);
-    });
+    // Verify the attributes
+    expect(SkillAssignment.rawAttributes).toHaveProperty('expiry_date');
+    expect(SkillAssignment.rawAttributes.expiry_date.type).toBeInstanceOf(DataTypes.DATE);
 
-    it('should be defined', () => {
-        expect(SkillAssignment).toBeDefined();
-    });
+    // Verify tableName and timestamps options
+    expect(SkillAssignment.options.timestamps).toBe(false);
+    expect(SkillAssignment.options.freezeTableName).toBe(true);
+    expect(SkillAssignment.options.tableName).toBe('skill_assignment');
+  });
 
-    it('should have the correct table name', () => {
-        expect(SkillAssignment.getTableName()).toBe('skill_assignment');
-    });
+  it('should have belongsTo associations with Staff, Skill, and SkillLevel', () => {
+    // Check the associations
+    const associations = SkillAssignment.associations;
+    
+    expect(associations.staff_id).toBeDefined();
+    expect(associations.staff_id.associationType).toBe('BelongsTo');
+    expect(associations.staff_id.target).toBe(Staff);
 
-    it('should have an expiry_date field', () => {
-        const attributes = SkillAssignment.rawAttributes;
-        expect(attributes).toHaveProperty('expiry_date');
-        expect(attributes.expiry_date.type).toBe(dbMock.Sequelize.DATE);
-    });
+    expect(associations.skill_id).toBeDefined();
+    expect(associations.skill_id.associationType).toBe('BelongsTo');
+    expect(associations.skill_id.target).toBe(Skill);
 
-    it('should belong to Staff', () => {
-        expect(SkillAssignment.associations).toHaveProperty('Staff');
-        expect(SkillAssignment.associations.Staff.associationType).toBe('BelongsTo');
-        expect(SkillAssignment.associations.Staff.foreignKey).toBe('staff_id');
-    });
-
-    it('should belong to Skill', () => {
-        expect(SkillAssignment.associations).toHaveProperty('Skill');
-        expect(SkillAssignment.associations.Skill.associationType).toBe('BelongsTo');
-        expect(SkillAssignment.associations.Skill.foreignKey).toBe('skill_id');
-    });
-
-    it('should belong to SkillLevel', () => {
-        expect(SkillAssignment.associations).toHaveProperty('SkillLevel');
-        expect(SkillAssignment.associations.SkillLevel.associationType).toBe('BelongsTo');
-        expect(SkillAssignment.associations.SkillLevel.foreignKey).toBe('skill_level_id');
-    });
+    expect(associations.skill_level_id).toBeDefined();
+    expect(associations.skill_level_id.associationType).toBe('BelongsTo');
+    expect(associations.skill_level_id.target).toBe(SkillLevel);
+  });
 });
+

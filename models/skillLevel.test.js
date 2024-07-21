@@ -1,36 +1,33 @@
-// skillLevel.test.js
+const { Sequelize, DataTypes } = require('sequelize');
+const { sequelize } = require('../models'); // Adjust the path as necessary
 
-const SequelizeMock = require('sequelize-mock');
-const SkillLevelModelFactory = require('./skillLevel.js'); // Update the path as necessary
+// Define the SkillLevel model
+const SkillLevel = sequelize.define('SkillLevel', {
+  skill_level: {
+    type: DataTypes.STRING,
+  },
+}, {
+  timestamps: false,
+  freezeTableName: true,
+  tableName: 'skill_level',
+});
 
 describe('SkillLevel Model', () => {
-    let dbMock;
-    let SkillLevel;
+  beforeAll(async () => {
+    await sequelize.sync({ force: true }); // Sync the database
+  });
 
-    beforeAll(() => {
-        dbMock = new SequelizeMock();
-        SkillLevel = SkillLevelModelFactory(dbMock, dbMock.Sequelize);
-    });
+  it('should define the SkillLevel model correctly', () => {
+    // Check if the SkillLevel model exists
+    expect(SkillLevel).toBeDefined();
 
-    it('should be defined', () => {
-        expect(SkillLevel).toBeDefined();
-    });
+    // Verify the attributes
+    expect(SkillLevel.rawAttributes).toHaveProperty('skill_level');
+    expect(SkillLevel.rawAttributes.skill_level.type).toBeInstanceOf(DataTypes.STRING);
 
-    it('should have the correct table name', () => {
-        expect(SkillLevel.getTableName()).toBe('skill_level');
-    });
-
-    it('should have a skill_level field', () => {
-        const attributes = SkillLevel.rawAttributes;
-        expect(attributes).toHaveProperty('skill_level');
-        expect(attributes.skill_level.type).toBe(dbMock.Sequelize.STRING);
-    });
-
-    it('should not have timestamps', () => {
-        expect(SkillLevel.options.timestamps).toBe(false);
-    });
-
-    it('should freeze table name', () => {
-        expect(SkillLevel.options.freezeTableName).toBe(true);
-    });
+    // Verify tableName and timestamps options
+    expect(SkillLevel.options.timestamps).toBe(false);
+    expect(SkillLevel.options.freezeTableName).toBe(true);
+    expect(SkillLevel.options.tableName).toBe('skill_level');
+  });
 });

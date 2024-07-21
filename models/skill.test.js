@@ -1,40 +1,30 @@
-// skill.test.js
-
-const SequelizeMock = require('sequelize-mock');
-const SkillModelFactory = require('./skill.js');
+const { Sequelize, DataTypes } = require('sequelize');
+const { sequelize, Skill, SkillCategory } = require('../models'); // Adjust the path as necessary
 
 describe('Skill Model', () => {
-    let dbMock;
-    let SkillCategoryMock;
-    let Skill;
+  beforeAll(async () => {
+    await sequelize.sync({ force: true }); // Sync the database
+  });
 
-    beforeAll(() => {
-        dbMock = new SequelizeMock();
-        SkillCategoryMock = dbMock.define('SkillCategory', {
-            name: 'Category1'
-        });
+  it('should define the Skill model correctly', () => {
+    // Check if the Skill model exists
+    expect(Skill).toBeDefined();
 
-        Skill = SkillModelFactory(dbMock, dbMock.Sequelize, SkillCategoryMock);
-    });
+    // Verify the attributes
+    expect(Skill.rawAttributes).toHaveProperty('description');
+    expect(Skill.rawAttributes.description.type).toBeInstanceOf(DataTypes.STRING);
+    expect(Skill.rawAttributes.description.allowNull).toBe(false);
 
-    it('should be defined', () => {
-        expect(Skill).toBeDefined();
-    });
+    // Verify tableName and timestamps options
+    expect(Skill.options.timestamps).toBe(false);
+    expect(Skill.options.freezeTableName).toBe(true);
+    expect(Skill.options.tableName).toBe('skill');
+  });
 
-    it('should have the correct table name', () => {
-        expect(Skill.getTableName()).toBe('skill');
-    });
-
-    it('should have a description field', () => {
-        const attributes = Skill.rawAttributes;
-        expect(attributes).toHaveProperty('description');
-        expect(attributes.description.type).toBe(dbMock.Sequelize.STRING);
-        expect(attributes.description.allowNull).toBe(false);
-    });
-
-    it('should belong to SkillCategory', () => {
-        expect(Skill.associations).toHaveProperty('SkillCategory');
-        expect(Skill.associations.SkillCategory.associationType).toBe('BelongsTo');
-        expect(Skill.associations.SkillCategory.foreignKey).toBe('skill_category_id');
-    });
+  it('should have a belongsTo association with SkillCategory', () => {
+    // Check the associations
+    expect(Skill.associations.skill_category_id).toBeDefined();
+    expect(Skill.associations.skill_category_id.associationType).toBe('BelongsTo');
+    expect(Skill.associations.skill_category_id.target).toBe(SkillCategory);
+  });
 });

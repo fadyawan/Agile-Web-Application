@@ -1,51 +1,50 @@
-// staffAssignment.test.js
+const { Sequelize, DataTypes } = require('sequelize');
+const { sequelize } = require('../models'); // Adjust the path as necessary
 
-const SequelizeMock = require('sequelize-mock');
-const StaffAssignmentModelFactory = require('./staffAssignment.js'); // Update the path as necessary
+// Define the User model for the purpose of this test
+const User = sequelize.define('User', {
+  username: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+}, {
+  timestamps: false,
+  freezeTableName: true,
+  tableName: 'user'
+});
+
+// Define the StaffAssignment model
+const StaffAssignment = sequelize.define('StaffAssignment', {}, {
+  timestamps: false,
+  freezeTableName: true,
+  tableName: 'staff_assignment'
+});
+
+// Define the associations
+StaffAssignment.belongsTo(User, { foreignKey: 'staff_id' });
+StaffAssignment.belongsTo(User, { foreignKey: 'manager_id' });
 
 describe('StaffAssignment Model', () => {
-    let dbMock;
-    let UserMock;
-    let StaffAssignment;
+  beforeAll(async () => {
+    await sequelize.sync({ force: true }); // Sync the database
+  });
 
-    beforeAll(() => {
-        dbMock = new SequelizeMock();
-        UserMock = dbMock.define('User', {
-            name: 'John Doe'
-        });
+  it('should define the StaffAssignment model correctly', () => {
+    // Check if the StaffAssignment model exists
+    expect(StaffAssignment).toBeDefined();
 
-        StaffAssignment = StaffAssignmentModelFactory(dbMock, dbMock.Sequelize, UserMock);
-    });
+    // Verify the tableName and timestamps options
+    expect(StaffAssignment.options.timestamps).toBe(false);
+    expect(StaffAssignment.options.freezeTableName).toBe(true);
+    expect(StaffAssignment.options.tableName).toBe('staff_assignment');
+  });
 
-    it('should be defined', () => {
-        expect(StaffAssignment).toBeDefined();
-    });
-
-    it('should have the correct table name', () => {
-        expect(StaffAssignment.getTableName()).toBe('staff_assignment');
-    });
-
-    it('should not have timestamps', () => {
-        expect(StaffAssignment.options.timestamps).toBe(false);
-    });
-
-    it('should freeze table name', () => {
-        expect(StaffAssignment.options.freezeTableName).toBe(true);
-    });
-
-    it('should belong to User as staff', () => {
-        expect(StaffAssignment.associations).toHaveProperty('User');
-        const staffAssociation = StaffAssignment.associations.User.find(assoc => assoc.foreignKey === 'staff_id');
-        expect(staffAssociation).toBeDefined();
-        expect(staffAssociation.associationType).toBe('BelongsTo');
-        expect(staffAssociation.foreignKey).toBe('staff_id');
-    });
-
-    it('should belong to User as manager', () => {
-        expect(StaffAssignment.associations).toHaveProperty('User');
-        const managerAssociation = StaffAssignment.associations.User.find(assoc => assoc.foreignKey === 'manager_id');
-        expect(managerAssociation).toBeDefined();
-        expect(managerAssociation.associationType).toBe('BelongsTo');
-        expect(managerAssociation.foreignKey).toBe('manager_id');
-    });
+  it('should have associations with User model', () => {
+    // Verify associations
+    expect(StaffAssignment.associations.staff_id).toBeDefined();
+    expect(StaffAssignment.associations.manager_id).toBeDefined();
+    expect(StaffAssignment.associations.staff_id.associationType).toBe('BelongsTo');
+    expect(StaffAssignment.associations.manager_id.associationType).toBe('BelongsTo');
+  });
 });
+

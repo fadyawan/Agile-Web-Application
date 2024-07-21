@@ -6,7 +6,7 @@ const userController = require('../controllers/user'); // Update the path as nec
 
 const app = express();
 app.use(express.json()); // To parse JSON bodies
-app.use('/users', userRouter);
+app.use('/', userRouter);
 
 describe('User Routes', () => {
     it('should get all users', async () => {
