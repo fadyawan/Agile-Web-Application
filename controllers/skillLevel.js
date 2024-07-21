@@ -94,8 +94,8 @@ update  = async (req, res) =>{
 
 
     try{
-        if (skillLevel.skillLevel == null ||
-            skillLevel.skillLevel.length <1){
+        if (skillLevel.skill_level == null ||
+            skillLevel.skill_level.length <1){
             throw new Error("Missing essential fields");
         }
 

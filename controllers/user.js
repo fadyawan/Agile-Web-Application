@@ -193,26 +193,13 @@ getByJobRole  = async (req, res) =>{
 
 
 getBySystemRole  = async (req, res) =>{
-    const systemRole = req.params.system_role;
-
-
-    try {
-        const sys = await SystemRole.findAll({where: {system_role: systemRole}});
-
-        if(sys==null || sys.length==0){
-            throw new Error("Unable to find the system role " + systemRole);
-        }
-        const sysRoleId = sys.id;
-        }
-        catch(error){
-            return utilities.formatErrorResponse(res,400,error.message);
-        }
+    const system_role_id = req.params.system_role_id;
 
     try {
-        const user = await User.findAll({where: {system_role_id: sysRoleId}});
+        const user = await User.findAll({where: {system_role_id: system_role_id}});
 
         if(user==null || user.length==0){
-            throw new Error("Unable to find any users with the system role " + systemRole);
+            throw new Error("Unable to find any users with the system role " + system_role_id);
         }
         res.status(200).json(user);
         }

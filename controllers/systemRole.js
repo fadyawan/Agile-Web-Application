@@ -95,8 +95,8 @@ update  = async (req, res) =>{
         }
 
     try{
-        if (systemRole.systemRole == null ||
-            systemRole.systemRole.length <1){
+        if (systemRole.system_role == null ||
+            systemRole.system_role.length <1){
             throw new Error("Missing essential fields");
         }
 
