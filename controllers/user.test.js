@@ -5,7 +5,6 @@ const SequelizeMock = require('sequelize-mock');
 const utilities = require('../utilities/utility');
 
 const app = express();
-app.use(express.json());
 
 // Mock the Sequelize instance
 const DBConnectionMock = new SequelizeMock();
