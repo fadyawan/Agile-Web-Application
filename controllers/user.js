@@ -43,7 +43,7 @@ create  = async (req, res) =>{
             }
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 
         try{
@@ -63,7 +63,7 @@ create  = async (req, res) =>{
             res.status(201).json(user);
             }
             catch (error){
-            utilities.formatErrorResponse(res,
+            return utilities.formatErrorResponse(res,
             400,
             error.message);
             }

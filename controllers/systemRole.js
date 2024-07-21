@@ -59,7 +59,7 @@ deleting  = async (req, res) =>{
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 
     try{
@@ -72,7 +72,7 @@ deleting  = async (req, res) =>{
         res.status(200).send("system role deleted");
     }
     catch(error){
-        utilities.formatErrorResponse(res,404,error.message);
+        return utilities.formatErrorResponse(res,404,error.message);
     }
     
 }
@@ -85,23 +85,18 @@ update  = async (req, res) =>{
     };
 
     try{
-<<<<<<< HEAD
-        if (systemRole.system_role == null ||
-            systemRole.system_role.length <1){
-=======
         const doesRoleExist = await SystemRole.findAll({where: {id: id}});
         if(doesRoleExist.length==0 || doesRoleExist==null){
             throw new Error("Unable to find the system role with id" + id);
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 
     try{
         if (systemRole.systemRole == null ||
             systemRole.systemRole.length <1){
->>>>>>> fecc1d9d95bade9dbf79de9d24843b87c55d2e83
             throw new Error("Missing essential fields");
         }
 
@@ -111,7 +106,7 @@ update  = async (req, res) =>{
         res.status(200).json(systemRole);
     }
     catch (error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }  
 }
 

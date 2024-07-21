@@ -56,7 +56,7 @@ deleting  = async (req, res) =>{
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 
 
@@ -70,7 +70,7 @@ deleting  = async (req, res) =>{
         res.status(200).send("skill category deleted");
     }
     catch(error){
-        utilities.formatErrorResponse(res,404,error.message);
+        return utilities.formatErrorResponse(res,404,error.message);
     }
     
 }
@@ -89,7 +89,7 @@ update  = async (req, res) =>{
         }
     }
     catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 
     try{
@@ -104,7 +104,7 @@ update  = async (req, res) =>{
         res.status(200).json(skillCategory);
     }
     catch (error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }  
 }
 
