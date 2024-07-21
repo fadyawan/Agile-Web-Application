@@ -10,8 +10,7 @@ module.exports = (sequelize, Sequelize, SkillCategory) => {
         tableName: 'skill'
     });
 
-    Skill.belongsTo(SkillCategory,
-        {foreignKey: 'skill_category_id'});
+    Skill.belongsTo(SkillCategory, { foreignKey: 'skill_category_id' });
 
     return Skill;
 };

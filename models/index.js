@@ -8,8 +8,6 @@ const StaffAssignment = require("./staffAssignment");
 const SystemRole = require("./systemRole");
 const User = require("./user");
 
-
-
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize(
   config.DB, 
@@ -27,22 +25,27 @@ sequelize
   })
   .catch(err => {
     console.error('Unable to connect to the database:', err);
-  })
+  });
 
 const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
+db.SkillCategory = SkillCategory(sequelize, Sequelize);
+db.Skill = Skill(sequelize, Sequelize, db.SkillCategory);
+db.SkillLevel = SkillLevel(sequelize, Sequelize);
+db.SystemRole = SystemRole(sequelize, Sequelize);
+db.User = User(sequelize, Sequelize, db.SystemRole);
+db.SkillAssignment = SkillAssignment(sequelize, Sequelize, db.User, db.Skill, db.SkillLevel);
+db.StaffAssignment = StaffAssignment(sequelize, Sequelize, db.User);
 
-db.skillCategory = SkillCategory(sequelize, Sequelize);
-db.skill = Skill(sequelize, Sequelize, db.skillCategory);
-db.skillLevel = SkillLevel(sequelize, Sequelize);
-db.systemRole = SystemRole(sequelize, Sequelize);
-db.user = User(sequelize, Sequelize, db.systemRole);
-db.skillAssignment = SkillAssignment(sequelize, Sequelize, db.user, db.skill, db.skillLevel);
-db.staffAssignment = StaffAssignment(sequelize, Sequelize, db.user);
+// Define associations
+db.User.hasMany(db.SkillAssignment, { foreignKey: 'staff_id' });
+db.Skill.hasMany(db.SkillAssignment, { foreignKey: 'skill_id' });
+db.SkillLevel.hasMany(db.SkillAssignment, { foreignKey: 'skill_level_id' });
 
-
+db.User.hasMany(db.StaffAssignment, { foreignKey: 'staff_id', as: 'StaffAssignments' });
+db.User.hasMany(db.StaffAssignment, { foreignKey: 'manager_id', as: 'ManagerAssignments' });
 
 module.exports = db;

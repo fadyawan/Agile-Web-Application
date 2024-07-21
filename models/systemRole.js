@@ -1,16 +1,14 @@
 module.exports = (sequelize, Sequelize) => {
-    const SystemRole = sequelize.define("SystemRole",
-    {
-    system_role: {
-        type: Sequelize.STRING,
-    }         
-    },
-    {
+  const SystemRole = sequelize.define("SystemRole", {
+      system_role: {
+          type: Sequelize.STRING,
+          allowNull: false
+      }
+  }, {
       timestamps: false,
       freezeTableName: true,
       tableName: 'system_role'
-    }
-    );
+  });
 
-    return SystemRole;
+  return SystemRole;
 };
