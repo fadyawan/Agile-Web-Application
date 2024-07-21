@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "start": "retire && node app.js",
+    "start": "nodemon app",
     "test": "jest"
   },
   "jest": {
