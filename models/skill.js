@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize, SkillCategory) => {
+module.exports = (sequelize, Sequelize, SkillAssignment) => {
     const Skill = sequelize.define("skill", {
         description: {
             type: Sequelize.STRING,
@@ -10,8 +10,9 @@ module.exports = (sequelize, Sequelize, SkillCategory) => {
         tableName: 'skill'
     });
 
-    Skill.belongsTo(SkillCategory,
-        {foreignKey: 'skill_category_id'});
+    Skill.belongsTo(SkillAssignment,
+        {foreignKey: 'skill_id'});
+
 
     return Skill;
 };

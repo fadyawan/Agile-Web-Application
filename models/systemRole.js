@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize, User) => {
     const SystemRole = sequelize.define("system_role",
     {
     system_role: {
@@ -11,6 +11,9 @@ module.exports = (sequelize, Sequelize) => {
       tableName: 'system_role'
     }
     );
+
+    SystemRole.belongsTo(User,
+      {foreignKey: 'system_role_id'});
 
     return SystemRole;
 };

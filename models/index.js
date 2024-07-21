@@ -34,14 +34,13 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-
-db.skillCategory = SkillCategory(sequelize, Sequelize);
-db.skill = Skill(sequelize, Sequelize, db.skillCategory);
-db.skillLevel = SkillLevel(sequelize, Sequelize);
-db.systemRole = SystemRole(sequelize, Sequelize);
-db.user = User(sequelize, Sequelize, db.systemRole);
-db.skillAssignment = SkillAssignment(sequelize, Sequelize, db.user, db.skill, db.skillLevel);
-db.staffAssignment = StaffAssignment(sequelize, Sequelize, db.user);
+db.skillAssignment = SkillAssignment(sequelize, Sequelize);
+db.staffAssignment = StaffAssignment(sequelize, Sequelize);
+db.skill = Skill(sequelize, Sequelize, db.skillAssignment);
+db.skillCategory = SkillCategory(sequelize, Sequelize, db.skill);
+db.skillLevel = SkillLevel(sequelize, Sequelize, db.skillAssignment );
+db.user = User(sequelize, Sequelize, db.skillAssignment, db.staffAssignment);
+db.systemRole = SystemRole(sequelize, Sequelize, db.user );
 
 
 

@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize, User) => {
+module.exports = (sequelize, Sequelize) => {
     const StaffAssignment = sequelize.define("staff_assignment",
     {},
     {
@@ -7,11 +7,6 @@ module.exports = (sequelize, Sequelize, User) => {
       tableName: 'staff_assignment'
     }
     );
-
-    StaffAssignment.belongsTo(User,
-        {foreignKey: 'staff_id', 
-         foreignKey: 'manager_id'
-        });
 
     return StaffAssignment;
 };

@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize, Staff, Skill, SkillLevel) => {
+module.exports = (sequelize, Sequelize) => {
     const SkillAssignment = sequelize.define("skill_assignment",
     {
     expiry_date: {
@@ -11,15 +11,6 @@ module.exports = (sequelize, Sequelize, Staff, Skill, SkillLevel) => {
       tableName: 'skill_assignment'
     }
     );
-
-    SkillAssignment.belongsTo(Staff,
-        {foreignKey: 'staff_id'});
-
-    SkillAssignment.belongsTo(Skill,
-        {foreignKey: 'skill_id'});
-
-    SkillAssignment.belongsTo(SkillLevel,
-        {foreignKey: 'skill_level_id'});
 
 
 

@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize, SkillAssignment) => {
     const SkillLevel = sequelize.define("skill_level",
     {
     skill_level: {
@@ -11,6 +11,9 @@ module.exports = (sequelize, Sequelize) => {
       tableName: 'skill_level'
     }
     );
+
+    SkillLevel.belongsTo(SkillAssignment,
+      {foreignKey: 'skill_level_id'});
 
     return SkillLevel;
 };
