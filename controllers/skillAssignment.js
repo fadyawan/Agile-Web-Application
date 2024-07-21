@@ -3,10 +3,10 @@ const utilities = require('../utilities/utility');
 
 const db = require('../models');
 
-const SkillAssignment = db.SkillAssignment;
-const Skill = db.Skill;
-const Staff = db.User;
-const SkillLevel = db.SkillLevel;
+const SkillAssignment = db.skillAssignment;
+const Skill = db.skill;
+const Staff = db.user;
+const SkillLevel = db.skillLevel;
 
 getAll  = async (req, res) =>{
     const skillAssignment = await SkillAssignment.findAll();

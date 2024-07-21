@@ -2,7 +2,7 @@ const router = require('../routes/skillLevel');
 const utilities = require('../utilities/utility');
 
 const db = require('../models');
-const SkillLevel = db.SkillLevel;
+const SkillLevel = db.skillLevel;
 
 getAll  = async (req, res) =>{
     const skillLevel = await SkillLevel.findAll();

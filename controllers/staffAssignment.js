@@ -2,7 +2,7 @@ const router = require('../routes/staffAssignment');
 const utilities = require('../utilities/utility');
 
 const db = require('../models');
-const StaffAssignment = db.StaffAssignment;
+const StaffAssignment = db.staffAssignment;
 const User = db.User
 
 getAll  = async (req, res) =>{
