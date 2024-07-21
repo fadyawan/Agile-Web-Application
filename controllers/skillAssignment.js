@@ -30,24 +30,12 @@ getById = async (req, res) =>{
 }
 
 getBySkills = async (req, res) =>{
-    const skillName = req.params.skill;
+    const skill_id = req.params.skill_id;
 
     try{
-        const skill = await Skill.findAll({where: {description: skillName}});
-        if(skill.length==0){
-            throw new Error("Unable to find the skill: " + skill);
-        }
-        const skillId = skill.id;
-    }
-    catch(error){
-        return utilities.formatErrorResponse(res,400,error.message);
-    }
-
-
-    try{
-        const skillAssignment = await SkillAssignment.findAll({where: {skill_id: skillId}});
+        const skillAssignment = await SkillAssignment.findAll({where: {skill_id: skill_id}});
         if(skillAssignment.length==0){
-            throw new Error("Unable to find any staff members with the skill: " + skill);
+            throw new Error("Unable to find any staff members with the skills with id " + skill_id);
         }
     }
     catch(error){
@@ -56,25 +44,12 @@ getBySkills = async (req, res) =>{
 }
 
 getByStaff = async (req, res) =>{
-    const firstname = req.params.firstname;
-    const surname = req.params.surname;
+    const staff_id = req.params.staff_id;
 
     try{
-        const staff = await Staff.findAll({where: {firstname: firstname, surname: surname}});
-        if(staff.length==0){
-            throw new Error("Unable to find the staff member: " + firstname + " " + surname);
-        }
-        const staffId = staff.id;
-    }
-    catch(error){
-        return utilities.formatErrorResponse(res,400,error.message);
-    }
-
-
-    try{
-        const skillAssignment = await SkillAssignment.findAll({where: {staff_id: staffId}});
+        const skillAssignment = await SkillAssignment.findAll({where: {staff_id: staff_id}});
         if(skillAssignment.length==0){
-            throw new Error("Unable to find any skill allocated to: " + firstname + " " + surname);
+            throw new Error("Unable to find any skill allocated to staff with id " + staff_id);
         }
     }
     catch(error){
@@ -141,8 +116,8 @@ try{
 update  = async (req, res) =>{
     const id =req.body.id;
 
-    const assignment = {
-        expiry: req.body.expiry_date,
+    var skillAssignment = {
+        expiry_date: req.body.expiry_date,
         skill_level: req.body.skill_level_id
     };
 
@@ -157,8 +132,8 @@ update  = async (req, res) =>{
         }
 
     try{
-        if (assignment.expiry == null ||
-            assignment.skill_level == null
+        if (skillAssignment.expiry_date == null ||
+            skillAssignment.skill_level == null
         ){
            throw new Error("Missing essential fields");
          }
@@ -173,30 +148,7 @@ update  = async (req, res) =>{
        }  
 }
 
-getAllStaffDetails = async (req, res) => {
-    try {
-        const staffDetails = await Staff.findAll({
-            include: [
-                {
-                    model: SkillAssignment,
-                    include: [
-                        {
-                            model: Skill,
-                            include: [SkillCategory]
-                        },
-                        {
-                            model: SkillLevel
-                        }
-                    ]
-                }
-            ]
-        });
 
-        res.status(200).json(staffDetails);
-    } catch (error) {
-        return utilities.formatErrorResponse(res, 500, error.message);
-    }
-}
 
 module.exports = {
     getAll,
@@ -206,5 +158,4 @@ module.exports = {
     create,
     deleting,
     update,
-    getAllStaffDetails
 };
