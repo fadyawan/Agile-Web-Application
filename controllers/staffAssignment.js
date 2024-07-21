@@ -2,8 +2,8 @@ const router = require('../routes/staffAssignment');
 const utilities = require('../utilities/utility');
 
 const db = require('../models');
-const StaffAssignment = db.StaffAssignment;
-const User = db.User
+const StaffAssignment = db.staffAssignment;
+const User = db.user
 
 getAll  = async (req, res) =>{
     const staffAssignment = await StaffAssignment.findAll();
@@ -22,7 +22,7 @@ getById = async (req, res) =>{
         res.status(200).json(staffAssignment);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -36,7 +36,7 @@ getByStaff = async (req, res) =>{
         }
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
     try {
@@ -48,7 +48,7 @@ getByStaff = async (req, res) =>{
         res.status(200).json(staffAssignment);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -62,7 +62,7 @@ getByManager = async (req, res) =>{
         }
     }
     catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
+        return utilities.formatErrorResponse(res,400,error.message);
     }
 
     try {
@@ -74,7 +74,7 @@ getByManager = async (req, res) =>{
         res.status(200).json(staffAssignment);
         }
         catch(error){
-            utilities.formatErrorResponse(res,400,error.message);
+            return utilities.formatErrorResponse(res,400,error.message);
         }
 }
 
@@ -82,42 +82,20 @@ getByManager = async (req, res) =>{
 
 create  = async (req, res) =>{
     var staffAssignment = {
-        staffId: req.body.staff_id,
-        managerId: req.body.manager_id
+        staff_id: req.body.staff_id,
+        manager_id: req.body.manager_id
     };
 
-
-    try{
-        const user = await User.findAll({where: {id: staffId}});
-        if(user.length==0){
-            throw new Error("Unable to find the staff member with id" + id);
-        }
-    }
-    catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
-    }
-
-    try{
-        const user = await User.findAll({where: {id: managerId}});
-        if(user.length==0){
-            throw new Error("Unable to find the manager with id" + id);
-        }
-    }
-    catch(error){
-        utilities.formatErrorResponse(res,400,error.message);
-    }
-
-
         try{
-            if (staffAssignment.staffId==null ||
-            staffAssignment.managerId==null){
+            if (staffAssignment.staff_id==null ||
+            staffAssignment.manager_id==null){
             throw new Error("Essential fields missing");
             }
-            staffAssignment = await StaffAssignment.create(staffAssignment);
+            createAssignment = await StaffAssignment.create(staffAssignment);
             res.status(201).json(staffAssignment);
             }
             catch (error){
-            utilities.formatErrorResponse(res,
+            return utilities.formatErrorResponse(res,
             400,
             error.message);
             }
@@ -126,6 +104,17 @@ create  = async (req, res) =>{
 deleting  = async (req, res) =>{
 
     const id = req.body.id;
+
+    try{
+        const doesAssignmentExist = await StaffAssignment.findAll({where: {id: id}});
+        if(doesAssignmentExist.length==0 || doesAssignmentExist==null){
+            throw new Error("Unable to find the staff assignment with id " + id);
+        }
+    }
+    catch(error){
+        return utilities.formatErrorResponse(res,400,error.message);
+        }
+
     try{
         const deleted = await StaffAssignment.destroy({where: { id: id }});
         
@@ -136,7 +125,7 @@ deleting  = async (req, res) =>{
         res.status(200).send("staff assignment deleted");
     }
     catch(error){
-        utilities.formatErrorResponse(res,404,error.message);
+        return utilities.formatErrorResponse(res,404,error.message);
     }
     
 }

@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize, SkillCategory) => {
-    const Skill = sequelize.define("Skill", {
+    const Skill = sequelize.define("skill", {
         description: {
             type: Sequelize.STRING,
             allowNull: false

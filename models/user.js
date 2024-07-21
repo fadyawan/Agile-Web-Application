@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize, SystemRole) => {
     },
     job_role: {
         type: Sequelize.STRING,
-    },              
+    },             
     },
     {
       timestamps: false,
@@ -26,6 +26,7 @@ module.exports = (sequelize, Sequelize, SystemRole) => {
 
     User.belongsTo(SystemRole,
         {foreignKey: 'system_role_id'});
+
 
 
     return User;
