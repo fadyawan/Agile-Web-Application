@@ -13,7 +13,7 @@ describe('SkillAssignment Model', () => {
 
         // Define models
         SkillLevel = SkillLevelModel(sequelize, DataTypes);
-        SkillAssignment = SkillAssignmentModel(sequelize, DataTypes, User, Skill, SkillLevel);
+        SkillAssignment = SkillAssignmentModel(sequelize, DataTypes, SkillLevel);
 
         // Sync models
         await sequelize.sync({ force: true });
