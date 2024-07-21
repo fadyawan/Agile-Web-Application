@@ -9,7 +9,14 @@ testApp.use(express.json());
 testApp.use('/api/skill', router);
 
 describe('Skill Router', () => {
+
+const server = testApp.listen(0); // Pass 0 to use a random available port
+
+  afterAll(done => {
+    server.close(done); // Ensure the server is closed after tests
+  });
   // Test GET /api/skill
+
   it('should respond with all skills', async () => {
     const response = await request(testApp).get('/api/skill/');
     expect(response.status).toBe(200);
