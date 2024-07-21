@@ -12,7 +12,6 @@ describe('SkillAssignment Model', () => {
         sequelize = new Sequelize('sqlite::memory:', { logging: false });
 
         // Define models
-        Skill = SkillModel(sequelize, DataTypes);
         SkillLevel = SkillLevelModel(sequelize, DataTypes);
         SkillAssignment = SkillAssignmentModel(sequelize, DataTypes, User, Skill, SkillLevel);
 
