@@ -1,6 +1,6 @@
 const request = require('supertest');
 const express = require('express');
-const app = require('./app'); // Adjust the path to where your Express app is exported
+const app = require('./app'); 
 
 describe('Express App', () => {
   it('should respond with 404 for unknown endpoints', async () => {
@@ -10,10 +10,10 @@ describe('Express App', () => {
   });
 
   it('should have helmet middleware set up', async () => {
-    const response = await request(app).get('/api/skillAssignment'); // Replace with a valid route
-    expect(response.status).toBe(200); // Assuming the route exists and responds with 200
+    const response = await request(app).get('/api/skillAssignment'); 
+    expect(response.status).toBe(200);
 
-    // Check if helmet headers are set
+
     expect(response.headers['x-content-type-options']).toBe('nosniff');
     expect(response.headers['x-frame-options']).toBe('DENY');
     expect(response.headers['x-xss-protection']).toBe('0');
@@ -21,16 +21,37 @@ describe('Express App', () => {
   });
 
   it('should respond correctly to skillAssignment route', async () => {
-    const response = await request(app).get('/api/skillAssignment'); // Replace with a valid route
-    expect(response.status).toBe(200); // Adjust based on your route's expected response
-    // Add more assertions based on expected response
+    const response = await request(app).get('/api/skillAssignment');
+    expect(response.status).toBe(200); 
   });
 
   it('should respond correctly to skillCategory route', async () => {
-    const response = await request(app).get('/api/skillCategory'); // Replace with a valid route
-    expect(response.status).toBe(200); // Adjust based on your route's expected response
-    // Add more assertions based on expected response
+    const response = await request(app).get('/api/skillCategory'); 
+    expect(response.status).toBe(200); 
   });
 
-  // Repeat similar tests for other routes
+  it('should respond correctly to skill route', async () => {
+    const response = await request(app).get('/api/skill'); 
+    expect(response.status).toBe(200);
+  });
+
+  it('should respond correctly to user route', async () => {
+    const response = await request(app).get('/api/user'); 
+    expect(response.status).toBe(200); 
+  });
+
+  it('should respond correctly to staffAssignment route', async () => {
+    const response = await request(app).get('/api/staffAssignment'); 
+    expect(response.status).toBe(200);
+  });
+
+  it('should respond correctly to skillLevel route', async () => {
+    const response = await request(app).get('/api/skillLevel'); 
+    expect(response.status).toBe(200); 
+  });
+
+  it('should respond correctly to systemrole route', async () => {
+    const response = await request(app).get('/api/systemRole'); 
+    expect(response.status).toBe(200); 
+  });
 });
