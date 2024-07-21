@@ -2,11 +2,12 @@ const router = require('../routes/staffAssignment');
 const utilities = require('../utilities/utility');
 
 const db = require('../models');
-const StaffAssignment = db.StaffAssignment;
+//const StaffAssignment = db.StaffAssignment;
+const { StaffAssignment } = require('../models');
 const User = db.User
 
 getAll  = async (req, res) =>{
-    const staffAssignment = await staff_assignment.findAll();
+    const staffAssignment = await StaffAssignment.findAll();
         res.status(200).json(staffAssignment);
 }
 

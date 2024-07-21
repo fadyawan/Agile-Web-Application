@@ -1,13 +1,14 @@
 const router = require('../routes/skill');
 const utilities = require('../utilities/utility');
+const { Skill } = require('../models');
 
 const db = require('../models');
-const Skill = db.Skill;
+//const Skill = db.Skill;
 const SkillCategory = db.SkillCategory;
 
 
 getAll = async (req, res) =>{
-    const skills = await skill.findAll();
+    const skills = await Skill.findAll();
         res.status(200).json(skills);
 }
 

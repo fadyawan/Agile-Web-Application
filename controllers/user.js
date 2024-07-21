@@ -2,11 +2,12 @@ const router = require('../routes/user');
 const utilities = require('../utilities/utility');
 
 const db = require('../models');
-const User = db.User;
+//const User = db.User;
+const { User } = require('../models');
 const SystemRole = db.SystemRole
 
 getAll  = async (req, res) =>{
-    const user = await user.findAll();
+    const user = await User.findAll();
         res.status(200).json(user);
 }
 
