@@ -1,6 +1,7 @@
 // test/skill.test.js
 const app = require('../app');
 const request = require('supertest');
+const express = require('express');
 const SequelizeMock = require('sequelize-mock');
 const utilities = require('../utilities/utility');
 
