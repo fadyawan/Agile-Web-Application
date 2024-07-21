@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize, SystemRole) => {
+module.exports = (sequelize, Sequelize, StaffAssignment, SkillAssignment) => {
     const User = sequelize.define("User", {
         firstname: {
             type: Sequelize.STRING,
@@ -27,7 +27,9 @@ module.exports = (sequelize, Sequelize, SystemRole) => {
         tableName: 'user'
     });
 
-    User.belongsTo(SystemRole, { foreignKey: 'system_role_id' });
+    User.belongsTo(StaffAssignment, { as: 'Staff', foreignKey: 'staff_id' });
+    User.belongsTo(StaffAssignment, { as: 'Manager', foreignKey: 'manager_id' });
+    User.belongsTo(SkillAssignment, { foreignKey: 'staff_id' });
 
     return User;
 };

@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize, Sequelize, User) => {
   const SystemRole = sequelize.define("SystemRole", {
       system_role: {
           type: Sequelize.STRING,
@@ -9,6 +9,8 @@ module.exports = (sequelize, Sequelize) => {
       freezeTableName: true,
       tableName: 'system_role'
   });
+
+  SystemRole.belongsTo(User, { foreignKey: 'system_role_id' });
 
   return SystemRole;
 };

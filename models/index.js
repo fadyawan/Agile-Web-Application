@@ -1,51 +1,36 @@
-const config = require("../config/config");
-
-const Skill = require("./skill");
-const SkillCategory = require("./skillCategory");
-const SkillLevel = require("./skillLevel");
-const SkillAssignment = require("./skillAssignment");
-const StaffAssignment = require("./staffAssignment");
-const SystemRole = require("./systemRole");
-const User = require("./user");
-
-const Sequelize = require("sequelize");
-const sequelize = new Sequelize(
-  config.DB, 
-  config.USER, 
-  config.PASSWORD, {
-  host: config.HOST,
-  dialect: config.dialect,
-  port: config.PORT
+const { Sequelize, DataTypes } = require('sequelize');
+const sequelize = new Sequelize('database', 'username', 'password', {
+  host: 'localhost',
+  dialect: 'mysql'
 });
 
-sequelize
-  .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully.');
-  })
-  .catch(err => {
-    console.error('Unable to connect to the database:', err);
-  });
+// Import models
+const SkillAssignment = require('./SkillAssignment')(sequelize, DataTypes, null);
+const StaffAssignment = require('./StaffAssignment')(sequelize, DataTypes, null);
+const Skill = require('./Skill')(sequelize, DataTypes, SkillAssignment);
+const SkillCategory = require('./SkillCategory')(sequelize, DataTypes, Skill);
+const SkillLevel = require('./SkillLevel')(sequelize, DataTypes, SkillAssignment);
+const SystemRole = require('./SystemRole')(sequelize, DataTypes, null);
+const User = require('./User')(sequelize, DataTypes, StaffAssignment, SkillAssignment);
 
-const db = {};
+// Set up associations
+Skill.belongsTo(SkillAssignment, { foreignKey: 'skill_id' });
+SkillCategory.belongsTo(Skill, { foreignKey: 'skill_category_id' });
+SkillLevel.belongsTo(SkillAssignment, { foreignKey: 'skill_level_id' });
+SystemRole.belongsTo(User, { foreignKey: 'system_role_id' });
 
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
+User.belongsTo(StaffAssignment, { as: 'Staff', foreignKey: 'staff_id' });
+User.belongsTo(StaffAssignment, { as: 'Manager', foreignKey: 'manager_id' });
+User.belongsTo(SkillAssignment, { foreignKey: 'staff_id' });
 
-db.SkillCategory = SkillCategory(sequelize, Sequelize);
-db.Skill = Skill(sequelize, Sequelize, db.SkillCategory);
-db.SkillLevel = SkillLevel(sequelize, Sequelize);
-db.SystemRole = SystemRole(sequelize, Sequelize);
-db.User = User(sequelize, Sequelize, db.SystemRole);
-db.SkillAssignment = SkillAssignment(sequelize, Sequelize, db.User, db.Skill, db.SkillLevel);
-db.StaffAssignment = StaffAssignment(sequelize, Sequelize, db.User);
-
-// Define associations
-db.User.hasMany(db.SkillAssignment, { foreignKey: 'staff_id' });
-db.Skill.hasMany(db.SkillAssignment, { foreignKey: 'skill_id' });
-db.SkillLevel.hasMany(db.SkillAssignment, { foreignKey: 'skill_level_id' });
-
-db.User.hasMany(db.StaffAssignment, { foreignKey: 'staff_id', as: 'StaffAssignments' });
-db.User.hasMany(db.StaffAssignment, { foreignKey: 'manager_id', as: 'ManagerAssignments' });
-
-module.exports = db;
+module.exports = {
+  sequelize,
+  Sequelize,
+  Skill,
+  SkillAssignment,
+  SkillCategory,
+  SkillLevel,
+  StaffAssignment,
+  SystemRole,
+  User
+};
