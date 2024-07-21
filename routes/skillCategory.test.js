@@ -33,7 +33,7 @@ describe('SkillCategory Routes', () => {
     });
 
     it('should create a new skill category', async () => {
-        const newSkillCategory = { description: 'New Category', 'id':1};
+        const newSkillCategory = { description: 'New Category', id:1};
         // Mock the controller method if needed
         jest.spyOn(skillCategoryController, 'create').mockImplementation((req, res) => {
             res.status(201).json(newSkillCategory);
@@ -45,7 +45,7 @@ describe('SkillCategory Routes', () => {
     });
 
     it('should update a skill category', async () => {
-        const updatedSkillCategory = { id: 1 };
+        const updatedSkillCategory = { 'id': 1 };
         // Mock the controller method if needed
         jest.spyOn(skillCategoryController, 'update').mockImplementation((req, res) => {
             res.status(200).json(updatedSkillCategory);
