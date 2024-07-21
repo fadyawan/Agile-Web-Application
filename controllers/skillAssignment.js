@@ -155,6 +155,16 @@ deleting = async (req, res) =>{
 const id = req.body.id;
 
 try{
+    const doesAssignmentExist = await SkillAssignment.findAll({where: {id: id}});
+    if(doesAssignmentExist.length==0 || doesAssignmentExist==null){
+        throw new Error("Unable to find the  skill assignment with id" + id);
+    }
+}
+catch(error){
+        utilities.formatErrorResponse(res,400,error.message);
+    }
+
+try{
     const deleted = await SkillAssignment.destroy({where: { id: id }});
 
     if (deleted==0) {
@@ -176,6 +186,16 @@ update  = async (req, res) =>{
         expiry: req.body.expiry_date,
         skill_level: req.body.skill_level_id
     };
+
+    try{
+        const doesAssignmentExist = await SkillAssignment.findAll({where: {id: id}});
+        if(doesAssignmentExist.length==0 || doesAssignmentExist==null){
+            throw new Error("Unable to find the  skill assignment with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
 
     try{
         if (assignment.expiry == null ||

@@ -86,7 +86,6 @@ create  = async (req, res) =>{
         managerId: req.body.manager_id
     };
 
-
     try{
         const user = await User.findAll({where: {id: staffId}});
         if(user.length==0){
@@ -126,6 +125,17 @@ create  = async (req, res) =>{
 deleting  = async (req, res) =>{
 
     const id = req.body.id;
+
+    try{
+        const doesAssignmentExist = await StaffAssignment.findAll({where: {id: id}});
+        if(doesAssignmentExist.length==0 || doesAssignmentExist==null){
+            throw new Error("Unable to find the  staff assignment with id" + id);
+        }
+    }
+    catch(error){
+            utilities.formatErrorResponse(res,400,error.message);
+        }
+
     try{
         const deleted = await StaffAssignment.destroy({where: { id: id }});
         
