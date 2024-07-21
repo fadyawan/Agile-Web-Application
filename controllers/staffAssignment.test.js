@@ -1,5 +1,5 @@
 // tests/staffAssignment.test.js
-
+const app = require('../app');
 const SequelizeMock = require('sequelize-mock');
 const express = require('express');
 const request = require('supertest');

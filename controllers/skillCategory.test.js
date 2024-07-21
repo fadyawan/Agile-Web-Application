@@ -1,11 +1,10 @@
 // tests/skillCategory.test.js
-
+const app = require('../app');
 const SequelizeMock = require('sequelize-mock');
 const express = require('express');
 const request = require('supertest');
 const utilities = require('../utilities/utility');  // Adjust the path as necessary
 const skillCategoryController = require('../controllers/skillCategory');
-const app = require('../app');
 
 // Initialize Sequelize Mock
 const DBConnectionMock = new SequelizeMock();
