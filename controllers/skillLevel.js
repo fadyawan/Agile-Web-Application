@@ -5,7 +5,7 @@ const db = require('../models');
 const SkillLevel = db.SkillLevel;
 
 getAll  = async (req, res) =>{
-    const skillLevel = await skill_level.findAll();
+    const skillLevel = await SkillLevel.findAll();
         res.status(200).json(skillLevel);
 }
 

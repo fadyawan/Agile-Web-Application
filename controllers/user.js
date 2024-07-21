@@ -6,7 +6,7 @@ const User = db.User;
 const SystemRole = db.SystemRole
 
 getAll  = async (req, res) =>{
-    const users = await user.findAll();
+    const user = await User.findAll();
         res.status(200).json(user);
 }
 
