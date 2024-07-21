@@ -45,7 +45,7 @@ describe('SkillCategory Routes', () => {
     });
 
     it('should update a skill category', async () => {
-        const updatedSkillCategory = { id: 1, description: 'Updated Category' };
+        const updatedSkillCategory = { id: 1 };
         // Mock the controller method if needed
         jest.spyOn(skillCategoryController, 'update').mockImplementation((req, res) => {
             res.status(200).json(updatedSkillCategory);
