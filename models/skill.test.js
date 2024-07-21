@@ -10,7 +10,7 @@ describe('Skill Model', () => {
 
   beforeAll(async () => {
     // Initialize Sequelize instance
-    sequelize =  Sequelize('sqlite::memory:', { logging: false });
+    sequelize = new Sequelize('sqlite::memory:', { logging: false });
 
     // Define models
     SkillCategory = SkillCategoryModel(sequelize, Sequelize);
