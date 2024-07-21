@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize, User) => {
-    const SkillAssignment = sequelize.define("SkillAssignment", {
+    const SkillAssignment = sequelize.define("skill_assignment", {
         expiry_date: {
             type: Sequelize.DATE
         }

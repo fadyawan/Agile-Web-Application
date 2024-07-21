@@ -6,7 +6,7 @@ const StaffAssignment = db.StaffAssignment;
 const User = db.User
 
 getAll  = async (req, res) =>{
-    const staffAssignment = await StaffAssignment.findAll();
+    const staffAssignment = await staff_assignment.findAll();
         res.status(200).json(staffAssignment);
 }
 

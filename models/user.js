@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize, StaffAssignment, SkillAssignment) => {
-    const User = sequelize.define("User", {
+    const User = sequelize.define("user", {
         firstname: {
             type: Sequelize.STRING,
             allowNull: false
