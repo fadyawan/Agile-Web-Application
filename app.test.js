@@ -16,7 +16,7 @@ describe('Express App', () => {
     // Check if helmet headers are set
     expect(response.headers['x-content-type-options']).toBe('nosniff');
     expect(response.headers['x-frame-options']).toBe('DENY');
-    expect(response.headers['x-xss-protection']).toBe('1; mode=block');
+    expect(response.headers['x-xss-protection']).toBe('0');
     expect(response.headers['strict-transport-security']).toContain('max-age=31536000');
   });
 
