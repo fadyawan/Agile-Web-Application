@@ -10,7 +10,7 @@ testApp.use('/api/skill', router);
 
 describe('Skill Router', () => {
 
-const server = testApp.listen(0); // Pass 0 to use a random available port
+const server = testApp.listen(99); // Pass 0 to use a random available port
 
   afterAll(done => {
     server.close(done); // Ensure the server is closed after tests
