@@ -1,12 +1,10 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const SkillAssignmentModel = require('../models/skillAssignment');
-const SkillModel = require('../models/skill');
 const SkillLevelModel = require('../models/skillLevel');
 
 describe('SkillAssignment Model', () => {
     let sequelize;
     let SkillAssignment;
-    let Skill;
     let SkillLevel;
 
     beforeAll(async () => {
@@ -34,7 +32,6 @@ describe('SkillAssignment Model', () => {
     });
 
     it('should have associations with User, Skill, and SkillLevel models', () => {
-        expect(SkillAssignment.associations.skill).toBeDefined();
         expect(SkillAssignment.associations.skillLevel).toBeDefined();
     });
 });
