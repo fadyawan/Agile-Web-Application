@@ -13,7 +13,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 
     try {
         // Send POST request to backend
-        const response = await fetch('http://localhost:3000/', {
+        const response = await fetch('http://localhost:8900/login', { // Updated URL to match backend route
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -36,4 +36,5 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         document.getElementById('error-message').textContent = 'An error occurred. Please try again.';
     }
 });
+
 
