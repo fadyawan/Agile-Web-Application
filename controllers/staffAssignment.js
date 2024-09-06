@@ -4,11 +4,16 @@ const utilities = require('../utilities/utility');
 const db = require('../models');
 const StaffAssignment = db.staffAssignment;
 const User = db.user
+const User2 = db.user
 
 getAll  = async (req, res) =>{
-    const staffAssignment = await StaffAssignment.findAll();
+    const staffAssignment = await StaffAssignment.findAll({include: User });
         res.status(200).json(staffAssignment);
 }
+
+
+
+
 
 getById = async (req, res) =>{
     const id = req.params.id;

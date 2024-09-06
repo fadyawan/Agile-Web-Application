@@ -9,7 +9,16 @@ const Staff = db.user;
 const SkillLevel = db.skillLevel;
 
 getAll  = async (req, res) =>{
-    const skillAssignment = await SkillAssignment.findAll();
+    const skillAssignment = await SkillAssignment.findAll({
+        include: [{
+        model: Staff,
+        required: true
+        },
+        {
+        model: Skill,
+        required: true
+        }]
+    });
         res.status(200).json(skillAssignment);
 }
 
@@ -17,7 +26,16 @@ getById = async (req, res) =>{
     const id = req.params.id;
 
     try {
-        const skillAssignment = await SkillAssignment.findByPk(id);
+        const skillAssignment = await SkillAssignment.findByPk(id,
+            {include: [{
+            model: Staff,
+            required: true
+            },
+            {
+            model: Skill,
+            required: true
+            }]
+        });
 
         if(skillAssignment==null || skillAssignment.length==0){
             throw new Error("Unable to find the skill assignment with id " + id);
@@ -33,7 +51,16 @@ getBySkills = async (req, res) =>{
     const skill_id = req.params.skill_id;
 
     try{
-        const skillAssignment = await SkillAssignment.findAll({where: {skill_id: skill_id}});
+        const skillAssignment = await SkillAssignment.findAll({where: {skill_id: skill_id},
+            include: [{
+                model: Staff,
+                required: true
+                },
+                {
+                model: Skill,
+                required: true
+                }]
+            });
         if(skillAssignment.length==0){
             throw new Error("Unable to find any staff members with the skills with id " + skill_id);
         }
@@ -47,7 +74,16 @@ getByStaff = async (req, res) =>{
     const staff_id = req.params.staff_id;
 
     try{
-        const skillAssignment = await SkillAssignment.findAll({where: {staff_id: staff_id}});
+        const skillAssignment = await SkillAssignment.findAll({where: {staff_id: staff_id},
+            include: [{
+                model: Staff,
+                required: true
+                },
+                {
+                model: Skill,
+                required: true
+                }]
+            });
         if(skillAssignment.length==0){
             throw new Error("Unable to find any skill allocated to staff with id " + staff_id);
         }

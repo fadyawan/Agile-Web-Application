@@ -6,7 +6,13 @@ const User = db.user;
 const SystemRole = db.systemRole
 
 getAll  = async (req, res) =>{
-    const user = await User.findAll();
+    const user = await User.findAll({
+        order:['id'],
+        include: [{
+        model: SystemRole,
+        required: true
+        }]
+    });
         res.status(200).json(user);
 }
 
@@ -14,7 +20,8 @@ getById = async (req, res) =>{
     const id = req.params.id;
 
     try {
-        const user = await User.findByPk(id);
+        const user = await User.findByPk(id,
+            {include: [{model: SystemRole, required: true}]});
 
         if(user==null || user.length==0){
             throw new Error("Unable to find the user with id " + id);
@@ -162,7 +169,11 @@ getByName  = async (req, res) =>{
     const surname = req.params.surname;
 
     try {
-        const user = await User.findAll({where: {firstname: firstname, surname: surname}});
+        const user = await User.findAll({where: {firstname: firstname, surname: surname},
+            include: [{
+            model: SystemRole,
+            required: true}]
+        });
 
         if(user==null || user.length==0){
             throw new Error("Unable to find user with the name " + firstname + " " + surname);
@@ -179,7 +190,11 @@ getByJobRole  = async (req, res) =>{
     const jobRole = req.params.job_role;
 
     try {
-        const user = await User.findAll({where: {job_role: jobRole}});
+        const user = await User.findAll({where: {job_role: jobRole},
+            include: [{
+            model: SystemRole,
+            required: true}]
+        });
 
         if(user==null || user.length==0){
             throw new Error("Unable to find any users with the job role " + jobRole);
@@ -196,7 +211,11 @@ getBySystemRole  = async (req, res) =>{
     const system_role_id = req.params.system_role_id;
 
     try {
-        const user = await User.findAll({where: {system_role_id: system_role_id}});
+        const user = await User.findAll({where: {system_role_id: system_role_id},
+            include: [{
+            model: SystemRole,
+            required: true}]
+        });
 
         if(user==null || user.length==0){
             throw new Error("Unable to find any users with the system role " + system_role_id);

@@ -8,7 +8,13 @@ const SkillAssignment = db.skillAssignment;
 
 
 getAll = async (req, res) =>{
-    const skill = await Skill.findAll();
+    const skill = await Skill.findAll({
+        order:['id'],
+        include: [{
+        model: SkillCategory,
+        required: true
+        }]
+    });
         res.status(200).json(skill);
 }
 
@@ -16,7 +22,9 @@ getSkillById = async (req, res) =>{
     const id = req.params.id;
 
     try {
-        const skill = await Skill.findByPk(id);
+        const skill = await Skill.findByPk(id,
+            {include: [{model: SkillCategory, required: true}]}
+            );
 
         if(skill==null || skill.length==0){
             throw new Error("Unable to find the skill with id " + id);
@@ -32,7 +40,11 @@ getSkillByDescription = async (req, res) =>{
     const description = req.params.description;
 
     try {
-        const skill = await Skill.findAll({where: {description: description}});
+        const skill = await Skill.findAll({where: {description: description},
+            include: [{
+            model: SkillCategory,
+            required: true}]
+        });
 
         if(skill==null || skill.length==0){
             throw new Error("Unable to find the skill with the description " + description);
@@ -49,7 +61,11 @@ getSkillByCategory = async (req, res) =>{
 
 
     try {
-        const skill = await Skill.findAll({where: {skill_category_id: categoryId}});
+        const skill = await Skill.findAll({where: {skill_category_id: categoryId},
+            include: [{
+            model: SkillCategory,
+            required: true}]
+        });
 
         if(skill==null || skill.length==0){
             throw new Error("Unable to find the skills within the category " + category);
