@@ -29,5 +29,8 @@ module.exports = (sequelize, Sequelize, SystemRole) => {
 
 
 
+
+
+
     return User;
 };

@@ -8,13 +8,21 @@ module.exports = (sequelize, Sequelize, User) => {
     }
     );
 
-    StaffAssignment.belongsTo(User,
-        {foreignKey: 'staff_id', 
-        });
+    StaffAssignment.belongsTo(User,{
+      foreignKey: {
+          field: 'staff_id',
+          allowNull: false
+      },
+      as: 'staffId',
+  });
 
-        StaffAssignment.belongsTo(User,
-          {foreignKey: 'manager_id', 
-          });
+  StaffAssignment.belongsTo(User,{
+    foreignKey: {
+        field: 'manager_id',
+        allowNull: false
+    },
+    as: 'managerId',
+});
 
     return StaffAssignment;
 };

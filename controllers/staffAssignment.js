@@ -4,10 +4,22 @@ const utilities = require('../utilities/utility');
 const db = require('../models');
 const StaffAssignment = db.staffAssignment;
 const User = db.user
-const User2 = db.user
 
 getAll  = async (req, res) =>{
-    const staffAssignment = await StaffAssignment.findAll({include: User });
+    const staffAssignment = await StaffAssignment.findAll({
+        include: [
+         {
+          model: User,
+          as: 'staffId'
+        },
+        {
+            model: User,
+            as: 'managerId'
+          },
+    ]
+      });
+
+
         res.status(200).json(staffAssignment);
 }
 
@@ -19,7 +31,16 @@ getById = async (req, res) =>{
     const id = req.params.id;
 
     try {
-        const staffAssignment = await StaffAssignment.findByPk(id);
+        const staffAssignment = await StaffAssignment.findByPk(id,
+            {include: [{
+                model: User,
+                as: 'staffId'
+              },
+              {
+                model: User,
+                as: 'managerId'
+              },]
+            });
 
         if(staffAssignment==null || staffAssignment.length==0){
             throw new Error("Unable to find the staff assignment with id " + id);
@@ -45,7 +66,16 @@ getByStaff = async (req, res) =>{
     }
 
     try {
-        const staffAssignment = await StaffAssignment.findAll({where: {staff_id: staffId}});
+        const staffAssignment = await StaffAssignment.findAll({where: {staff_id: staffId},
+            include: [{
+                model: User,
+                as: 'staffId'
+              },
+              {
+                model: User,
+                as: 'managerId'
+              },]
+            });
 
         if(staffAssignment==null || staffAssignment.length==0){
             throw new Error("Unable to find assignments for staff with id " + staffId);
@@ -71,7 +101,16 @@ getByManager = async (req, res) =>{
     }
 
     try {
-        const staffAssignment = await StaffAssignment.findAll({where: {manager_id: managerId}});
+        const staffAssignment = await StaffAssignment.findAll({where: {manager_id: managerId},
+            include: [{
+                model: User,
+                as: 'staffId'
+              },
+              {
+                model: User,
+                as: 'managerId'
+              },]
+            });
 
         if(staffAssignment==null || staffAssignment.length==0){
             throw new Error("Unable to find assignments for manager with id " + managerId);
