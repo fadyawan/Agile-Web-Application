@@ -17,7 +17,11 @@ getAll  = async (req, res) =>{
         {
         model: Skill,
         required: true
-        }]
+        },
+        {
+        model: SkillLevel,
+        required: true
+            }]
     });
         res.status(200).json(skillAssignment);
 }
@@ -34,7 +38,11 @@ getById = async (req, res) =>{
             {
             model: Skill,
             required: true
-            }]
+            },
+            {
+            model: SkillLevel,
+            required: true
+                }]
         });
 
         if(skillAssignment==null || skillAssignment.length==0){
@@ -59,7 +67,11 @@ getBySkills = async (req, res) =>{
                 {
                 model: Skill,
                 required: true
-                }]
+                },
+                {
+                model: SkillLevel,
+                required: true
+                    }]
             });
         if(skillAssignment.length==0){
             throw new Error("Unable to find any staff members with the skills with id " + skill_id);
@@ -81,6 +93,10 @@ getByStaff = async (req, res) =>{
                 },
                 {
                 model: Skill,
+                required: true
+                },
+                {
+                model: SkillLevel,
                 required: true
                 }]
             });
