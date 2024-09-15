@@ -13,7 +13,7 @@ module.exports = (sequelize, Sequelize, User) => {
           field: 'staff_id',
           allowNull: false
       },
-      as: 'staffId',
+      as: 'staff',
   });
 
   StaffAssignment.belongsTo(User,{
@@ -21,7 +21,7 @@ module.exports = (sequelize, Sequelize, User) => {
         field: 'manager_id',
         allowNull: false
     },
-    as: 'managerId',
+    as: 'manager',
 });
 
     return StaffAssignment;

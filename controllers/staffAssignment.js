@@ -10,11 +10,11 @@ getAll  = async (req, res) =>{
         include: [
          {
           model: User,
-          as: 'staffId'
+          as: 'staff'
         },
         {
             model: User,
-            as: 'managerId'
+            as: 'manager'
           },
     ]
       });
@@ -34,11 +34,11 @@ getById = async (req, res) =>{
         const staffAssignment = await StaffAssignment.findByPk(id,
             {include: [{
                 model: User,
-                as: 'staffId'
+                as: 'staff'
               },
               {
                 model: User,
-                as: 'managerId'
+                as: 'manager'
               },]
             });
 
@@ -69,11 +69,11 @@ getByStaff = async (req, res) =>{
         const staffAssignment = await StaffAssignment.findAll({where: {staff_id: staffId},
             include: [{
                 model: User,
-                as: 'staffId'
+                as: 'staff'
               },
               {
                 model: User,
-                as: 'managerId'
+                as: 'manager'
               },]
             });
 
@@ -104,11 +104,11 @@ getByManager = async (req, res) =>{
         const staffAssignment = await StaffAssignment.findAll({where: {manager_id: managerId},
             include: [{
                 model: User,
-                as: 'staffId'
+                as: 'staff'
               },
               {
                 model: User,
-                as: 'managerId'
+                as: 'manager'
               },]
             });
 
