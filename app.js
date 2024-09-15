@@ -14,6 +14,14 @@ const staffAssignmentRouter = require('./routes/staffAssignment');
 
 const utilities = require('./utilities/utility');
 
+const session = require('express-session');
+
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'default_secret_key',
+    resave: false,
+    saveUninitialized: true,
+  }));
+
 app.use(helmet());
 app.use(helmet.hsts({ maxAge: 31536000, includeSubDomains: true }));
 app.use(helmet.frameguard({ action: 'deny' }));
