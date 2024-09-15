@@ -126,15 +126,18 @@ getByManager = async (req, res) =>{
 
 create  = async (req, res) =>{
     var staffAssignment = {
-        staff_id: req.body.staff_id,
-        manager_id: req.body.manager_id
+        staffId: req.body.staffId,
+        managerId: req.body.managerId
     };
 
         try{
-            if (staffAssignment.staff_id==null ||
-            staffAssignment.manager_id==null){
+            if (staffAssignment.staffId==null ||
+            staffAssignment.managerId==null){
             throw new Error("Essential fields missing");
             }
+            if (staffAssignment.staffId==staffAssignment.managerId){
+                throw new Error("Manager and Staff cannot be equal");
+                }
             createAssignment = await StaffAssignment.create(staffAssignment);
             res.status(201).json(staffAssignment);
             }
